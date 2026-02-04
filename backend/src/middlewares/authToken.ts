@@ -12,7 +12,7 @@ export const authToken = async (req: Request, res: Response, next: NextFn) => {
 
   if (!token) return res.status(403).json("Token not provided");
 
-  jwt.verify(token, process.env.JWT_SECRET!, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET!, (err: Error, decoded: { id: string; role: string; }) => {
     if (err) return res.status(403).json("Error to auth token");
     req.userData = decoded;
     next();

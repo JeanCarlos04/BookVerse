@@ -33,7 +33,7 @@ function Aside() {
 
             <li className="py-1 group px-3 rounded duration-200">
               <Link
-                to={"/Profile"}
+                to={"/userSavedBooks"}
                 className=" duration-200 text-gray-200 flex gap-2 items-center"
               >
                 <div className="size-6 flex group-hover:bg-blue-500 duration-200 justify-center items-center rounded bg-gray-800">
@@ -45,7 +45,7 @@ function Aside() {
             </li>
             <li className="py-1 group px-3 rounded duration-200">
               <Link
-                to={"/Profile"}
+                to={"/favoriteBooks"}
                 className=" duration-200 text-gray-200 flex gap-2 items-center"
               >
                 <div className="size-6 flex group-hover:bg-blue-500 duration-200 justify-center items-center rounded bg-gray-800">
@@ -57,7 +57,7 @@ function Aside() {
             </li>
             <li className="py-1 group px-3 rounded duration-200">
               <Link
-                to={"/Profile"}
+                to={"/profile"}
                 className=" duration-200 text-gray-200 flex gap-2 items-center"
               >
                 <div className="size-6 flex group-hover:bg-blue-500 duration-200 justify-center items-center rounded bg-gray-800">

@@ -1,19 +1,119 @@
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
-import BookList from "../components/BookList";
+import BookSection from "../components/BookSection";
+import ShowingBooks from "../components/ShowingBooks";
+import CheckBook from "../components/CheckBook";
+import { FaFire } from "react-icons/fa6";
+import useContextHook from "../hooks/useContextHook";
+import { useEffect } from "react";
+import { useState, useRef } from "react";
+import type { BooksType } from "../types/booksType";
+import ToastModal from "../components/UX/ToastModal";
 
 function Home() {
-  return (
-    <>
-      <main className="flex w-full h-full">
-        <Aside />
-        <div className="w-full">
-          <Nav />
+  const { showModals, bookId, search, setBooksPerPage, booksPerPage } =
+    useContextHook();
+  const [books, setBooks] = useState<BooksType[]>([]);
+  const [mostLikedBooks, setMostLikedBooks] = useState<BooksType[]>([]);
+  const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-          <BookList />
-        </div>
-      </main>
-    </>
+  const searchBooks = async (search: string) => {
+    const params = new URLSearchParams();
+    params.set("search", search);
+
+    const res = await fetch(
+      `http://localhost:3000/books/search?${params.toString()}`,
+      { credentials: "include" },
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      setBooks(data);
+    }
+  };
+
+  const getMostLikedBooks = async () => {
+    const res = await fetch("http://localhost:3000/books/get/mostLiked", {
+      credentials: "include",
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      setMostLikedBooks(data);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      getMostLikedBooks();
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (timeRef.current) clearTimeout(timeRef.current);
+
+    timeRef.current = setTimeout(() => {
+      searchBooks(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeRef.current);
+    };
+  }, [search]);
+
+  return (
+    <main className="flex w-full h-full">
+      <Aside />
+      <div className="w-full">
+        <Nav />
+
+        <BookSection
+          booksLength={books.length}
+          iconColor="#f22b2b"
+          TitleIcon={FaFire}
+          title="Recommended"
+          onShowMore={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              reccommendedPerPage: booksPerPage.reccommendedPerPage + 10,
+            })
+          }
+          children={
+            <ShowingBooks
+              booksPerPage={booksPerPage.reccommendedPerPage}
+              bookData={books}
+            />
+          }
+        />
+
+        <BookSection
+          booksLength={mostLikedBooks.length}
+          iconColor="#f22b2b"
+          TitleIcon={FaFire}
+          title="Most liked"
+          onShowMore={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              mostLikedPerPage: booksPerPage.mostLikedPerPage + 10,
+            })
+          }
+          children={
+            <ShowingBooks
+              booksPerPage={booksPerPage.reccommendedPerPage}
+              bookData={mostLikedBooks}
+            />
+          }
+        />
+
+        {bookId && showModals.checkBookModal && (
+          <>{<CheckBook book_id={bookId} />}</>
+        )}
+      </div>
+
+      <ToastModal />
+    </main>
   );
 }
 

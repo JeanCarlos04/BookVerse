@@ -68,3 +68,16 @@ export const getBook = async (req: Request, res: Response) => {
 
   res.json(foundedBook.rows[0]);
 };
+
+export const getMostLikedBooks = async (req: Request, res: Response) => {
+  try {
+    const mostLikedBooks = await connection.query(
+      `SELECT * FROM books ORDER BY likes DESC LIMIT 10`,
+    );
+
+    res.json(mostLikedBooks.rows);
+  } catch (err) {
+    console.error(err);
+  }
+};
+

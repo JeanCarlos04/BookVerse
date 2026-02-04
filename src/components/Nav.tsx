@@ -1,8 +1,10 @@
 import { FaRegBell, FaMagnifyingGlass } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
+import Notifications from "./Notifications";
 
 function Nav() {
-  const { myProfile, setSearch } = useContextHook();
+  const { myProfile, setSearch, setShowModals, showModals, notifications } =
+    useContextHook();
 
   return (
     <div className="h-(--nav-height) z-100 w-full relative min-h-(--nav-height) max-h-(--nav-height)">
@@ -17,10 +19,23 @@ function Nav() {
           <FaMagnifyingGlass className="absolute right-2 text-gray-500 text-[14px]" />
         </div>
 
-        <div className="flex relative min-h-7.5 min-w-7.5 items-center cursor-pointer">
-          <div className="text-[10px] absolute right-1 top-0 size-4 flex items-center justify-center font-medium bg-red-500 rounded-full text-white">
-            5
-          </div>
+        <div
+          onClick={() => {
+            setShowModals({
+              ...showModals,
+              notificationModal:
+                showModals.notificationModal === "showModal"
+                  ? "hideModal"
+                  : "showModal",
+            });
+          }}
+          className="flex relative min-h-7.5 min-w-7.5 items-center cursor-pointer"
+        >
+          {notifications.length > 0 && (
+            <div className="text-[10px] absolute right-1 top-0 size-4 flex items-center justify-center font-medium bg-red-500 rounded-full text-white">
+              {notifications.length}
+            </div>
+          )}
           <FaRegBell className="text-xl" />
         </div>
         <div className="flex gap-1 rounded items-center cursor-pointer">
@@ -33,6 +48,7 @@ function Nav() {
             @{myProfile?.username}
           </p>
         </div>
+        <Notifications />
       </nav>
     </div>
   );

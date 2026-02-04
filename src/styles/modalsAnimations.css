@@ -25,3 +25,31 @@
 .showModal {
   animation: slideLeft 0.4s both ease-in-out;
 }
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(300px);
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(300px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.hideModal.notificationModal {
+  animation: slideRight 0.3s both ease-in-out;
+}
+
+.showModal.notificationModal {
+  animation: slideLeft 0.4s both ease-in-out;
+}

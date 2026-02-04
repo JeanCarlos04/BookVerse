@@ -1,0 +1,27 @@
+.showToast {
+  animation: slideUp 0.5s both ease-in-out;
+}
+
+.hideToast {
+  animation: slideDown 0.5s both ease-in-out;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translatey(100px);
+  }
+
+  100% {
+    transform: translatey(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translatey(0);
+  }
+
+  100% {
+    transform: translatey(100px);
+  }
+}

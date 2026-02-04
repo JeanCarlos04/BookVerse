@@ -33,12 +33,12 @@ export const addBooks = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserBooks = async (req: Request, res: Response) => {
+export const getUserSavedBooks = async (req: Request, res: Response) => {
   try {
     const user_books = await connection.query(
       `
-      SELECT u_b.book_id as id, b.title, 
-      b.sinopsis, b.created_at, b.categories
+      SELECT u_b.book_id as id, b.cover, b.title, 
+      b.sinopsis, b.created_at, b.categories, b.author
       FROM user_books u_b
         JOIN books b ON b.id = u_b.book_id
         JOIN users u ON u.id = u_b.user_id
