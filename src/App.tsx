@@ -9,6 +9,7 @@ const Register = lazy(() => import("./pages/Register"));
 const Home = lazy(() => import("./pages/Home"));
 const SavedBooks = lazy(() => import("./pages/SavedBooks"));
 const FavoriteBooks = lazy(() => import("./pages/FavoriteBook"));
+const Calender = lazy(() => import("./pages/Calendar"));
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/practica" element={<Practica />} />
         <Route path="/userSavedBooks" element={<SavedBooks />} />
         <Route path="/favoriteBooks" element={<FavoriteBooks />} />
+        <Route path="/calendar" element={<Calender />} />
       </Routes>
     </Suspense>
   );
