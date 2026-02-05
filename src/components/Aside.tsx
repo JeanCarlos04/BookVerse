@@ -1,5 +1,10 @@
 import { Link } from "react-router-dom";
-import { FaRegUser, FaBook, FaRegHeart } from "react-icons/fa";
+import {
+  FaRegUser,
+  FaBook,
+  FaRegHeart,
+  FaRegCalendarCheck,
+} from "react-icons/fa";
 import { FaHouseChimney, FaArrowRightFromBracket } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
 
@@ -53,6 +58,18 @@ function Aside() {
                   <FaRegHeart className=" group-hover:text-white text-gray-300" />
                 </div>
                 Favorites
+              </Link>
+            </li>
+            <li className="py-1 group px-3 rounded duration-200">
+              <Link
+                to={"/calendar"}
+                className=" duration-200 text-gray-200 flex gap-2 items-center"
+              >
+                <div className="size-6 flex group-hover:bg-blue-500 duration-200 justify-center items-center rounded bg-gray-800">
+                  {" "}
+                  <FaRegCalendarCheck className=" group-hover:text-white text-gray-300" />
+                </div>
+                Calendar
               </Link>
             </li>
             <li className="py-1 group px-3 rounded duration-200">
