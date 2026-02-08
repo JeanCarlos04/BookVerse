@@ -9,3 +9,8 @@ export interface BooksType {
   pages: number;
   categories: string[];
 }
+
+export type BooksReservedType = BooksType & {
+  expires_in: Date;
+  reserved_in: Date;
+}

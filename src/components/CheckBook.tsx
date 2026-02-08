@@ -24,6 +24,8 @@ function CheckBook({ book_id }: CheckBookProps) {
     favorieBooks,
     setCheckBookData,
     checkBookData,
+    handleReserveBooks,
+    reservedBooks,
   } = useContextHook();
 
   const getBook = async () => {
@@ -35,6 +37,8 @@ function CheckBook({ book_id }: CheckBookProps) {
       setCheckBookData(data);
     }
   };
+
+  const isReserved = reservedBooks.some((book) => book.id === book_id);
 
   const allUserBooks: BooksType["id"][] = userBooks?.map((book) => book.id);
 
@@ -140,8 +144,18 @@ function CheckBook({ book_id }: CheckBookProps) {
               </p>
             </div>
 
-            <button className="hover:bg-gray-100 duration-150 font-medium w-full bg-[#ffffff] flex items-center gap-2 justify-center text-black py-1 rounded-md cursor-pointer">
-              <FaBookBookmark /> Reserve
+            <button
+              onClick={() =>
+                isReserved
+                  ? null
+                  : handleReserveBooks(
+                      book_id,
+                      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                    )
+              }
+              className={`${isReserved ? "bg-green-500 hover:bg-green-600 text-white" : "bg-[#ffffff] hover:bg-gray-100"}  duration-150 font-medium w-full  flex items-center gap-2 justify-center text-black py-1 rounded-md cursor-pointer`}
+            >
+              <FaBookBookmark /> {isReserved ? "Reserved" : "Reserve"}
             </button>
           </section>
         </aside>

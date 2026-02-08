@@ -21,6 +21,8 @@ import {
   addLikes,
   getUserSavedBooks,
   getLikedBooks,
+  reserveBook,
+  getUserReservedBooks,
 } from "../controllers/user_books_controllers.ts";
 import {
   createNotification,
@@ -55,10 +57,12 @@ router.get("/books/get/:book_id", authToken, getBook);
 
 // USER BOOKS APIs
 
+router.post("/user/books/reserve/:book_id", authToken, reserveBook);
 router.post("/user/books/add/:book_id", authToken, addBooks);
 router.get("/user/books/get", authToken, getUserSavedBooks);
 router.post("/user/books/like/:book_id", authToken, addLikes);
 router.get("/user/books/get/liked", authToken, getLikedBooks);
+router.get("/user/books/get/reserved", authToken, getUserReservedBooks);
 
 // NOTIFICATION APIs
 

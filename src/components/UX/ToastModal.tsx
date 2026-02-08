@@ -17,7 +17,7 @@ function ToastModal() {
             setToastClass("disappearToast");
           }
         }}
-        className={`${toastClass} ${toastType?.type === "add" ? "bg-green-400 border-green-300" : "bg-red-500 border-red-400"} border border-green-300 rounded-md px-4 py-1 fixed right-[50%] bottom-6 translate-x-[-50%] `}
+        className={`${toastClass} ${toastType?.type === "add" ? "bg-green-400 border-green-300" : "bg-red-500 border-red-400"} border border-green-300 rounded-md px-4 py-1 fixed right-[40%] bottom-6  `}
       >
         <p className={`text-white font-medium flex items-center gap-2`}>
           {toastType?.message}

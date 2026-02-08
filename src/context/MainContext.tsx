@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import type { UsersType } from "../types/usersType";
-import type { BooksType } from "../types/booksType";
+import type { BooksReservedType, BooksType } from "../types/booksType";
 import type { ToastType } from "../types/toastType";
 import { useNavigate } from "react-router-dom";
 import type { NotificationsType } from "../types/NotificationsType";
@@ -35,6 +35,8 @@ interface ContextType {
   notifications: NotificationsType[];
   setBooksPerPage: React.Dispatch<React.SetStateAction<Record<string, number>>>;
   booksPerPage: Record<string, number>;
+  handleReserveBooks: (book_id: number, expires_in: Date) => void;
+  reservedBooks: BooksReservedType[];
 }
 
 const defaultContextTypes = {
@@ -62,6 +64,8 @@ const defaultContextTypes = {
   notifications: [],
   setBooksPerPage: () => {},
   booksPerPage: {},
+  handleReserveBooks: () => {},
+  reservedBooks: [],
 };
 
 const MainContext = createContext<ContextType>(defaultContextTypes);
@@ -86,7 +90,9 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     mostLikedPerPage: 10,
     savedBooksPerPage: 10,
     favoriteBooksPerPage: 10,
+    reservedBooksPerPage: 10,
   });
+  const [reservedBooks, setReservedBooks] = useState<BooksReservedType[]>([]);
 
   const getUser = async () => {
     try {
@@ -116,6 +122,17 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     }
   };
 
+  const getUserReservedBooks = async () => {
+    const res = await fetch("http://localhost:3000/user/books/get/reserved", {
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      setReservedBooks(data);
+    }
+  };
+
   const getUserFavoriteBooks = async () => {
     const res = await fetch("http://localhost:3000/user/books/get/liked", {
       credentials: "include",
@@ -129,7 +146,12 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
 
   useEffect(() => {
     const init = async () => {
-      await Promise.all([getUser(), getUserBooks(), getUserFavoriteBooks()]);
+      await Promise.all([
+        getUser(),
+        getUserBooks(),
+        getUserFavoriteBooks(),
+        getUserReservedBooks(),
+      ]);
     };
 
     init();
@@ -192,6 +214,25 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     }
   };
 
+  const handleReserveBooks = async (
+    book_id: BooksType["id"],
+    expires_in: Date,
+  ) => {
+    const res = await fetch(
+      `http://localhost:3000/user/books/reserve/${book_id}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ expires_in }),
+      },
+    );
+
+    if (res.ok) {
+      setToastType({ type: "add", message: "Book reserved successfully" });
+    }
+  };
+
   return (
     <MainContext.Provider
       value={{
@@ -217,6 +258,8 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
         setNotifications,
         booksPerPage,
         setBooksPerPage,
+        handleReserveBooks,
+        reservedBooks,
       }}
     >
       {children}
