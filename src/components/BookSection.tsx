@@ -1,5 +1,6 @@
 import type { IconType } from "react-icons";
 import { FaArrowDownLong } from "react-icons/fa6";
+import EmptySection from "./UX/EmpySection";
 
 interface BookSectionProps {
   children: React.ReactNode;
@@ -27,7 +28,12 @@ function BookSection({
           </h1>
         </header>
 
-        <div className="grid grid-cols-5 gap-y-6 gap-x-8">{children}</div>
+        {booksLength <= 0 ? (
+          <EmptySection message="No books to show." />
+        ) : (
+          <div className="grid grid-cols-5 gap-y-6 gap-x-8">{children}</div>
+        )}
+
         {booksLength > 15 && (
           <button
             onClick={onShowMore}

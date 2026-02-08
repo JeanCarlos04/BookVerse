@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
 import type { BooksType } from "../types/booksType";
-import { FaBookBookmark } from "react-icons/fa6";
+import { FaBookBookmark, FaDownload } from "react-icons/fa6";
 import CheckBook from "../components/CheckBook";
 import useContextHook from "../hooks/useContextHook";
 import ShowingBooks from "../components/ShowingBooks";
@@ -10,7 +10,7 @@ import BookSection from "../components/BookSection";
 
 function SavedBooks() {
   const [userSavedBooks, setUserSavedBooks] = useState<BooksType[]>([]);
-  const { showModals, bookId, booksPerPage, setBooksPerPage } =
+  const { showModals, bookId, booksPerPage, setBooksPerPage, reservedBooks } =
     useContextHook();
 
   const getUserBooks = async () => {
@@ -34,6 +34,25 @@ function SavedBooks() {
       <Aside />
       <div className="w-full">
         <Nav />
+
+        <BookSection
+          booksLength={reservedBooks.length}
+          iconColor="#27d844"
+          TitleIcon={FaDownload}
+          title="Reserved books"
+          onShowMore={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              reservedBooksPerPage: booksPerPage.reservedBooksPerPage + 10,
+            })
+          }
+          children={
+            <ShowingBooks
+              booksPerPage={booksPerPage.reservedBooksPerPage}
+              bookData={reservedBooks}
+            />
+          }
+        />
 
         <BookSection
           booksLength={userSavedBooks.length}

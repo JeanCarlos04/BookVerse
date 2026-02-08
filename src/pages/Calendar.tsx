@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
-// import CheckBook from "../components/CheckBook";
 import ToastModal from "../components/UX/ToastModal";
+import useContextHook from "../hooks/useContextHook";
 
 function Calendar() {
-  // const [calendarInput, setCalendarInput] = useState(
-  //   new Date().toLocaleDateString(),
-  // );
+  const { reservedBooks } = useContextHook();
   const [formatedDay, setFormatedDays] = useState<(number | null)[][]>([]);
   const [month, setMonth] = useState(new Date().getMonth());
   const [monthDay, setMonthDay] = useState(new Date().getDate());
@@ -81,10 +79,6 @@ function Calendar() {
               <h2 className="text-lg font-medium">My Calendar</h2>
               <input
                 onChange={(e) => {
-                  // setCalendarInput(() =>
-                  //   new Date(e.target.value).toLocaleDateString(),
-                  // );
-
                   const splittedDate = new Date(e.target.value)
                     .toLocaleDateString()
                     .split("/");
@@ -106,18 +100,18 @@ function Calendar() {
             </header>
             <div className="w-full flex flex-col gap-4 justify-center items-center">
               <h2 className="text-center capitalize font-medium text-xl">
-                {calendar[month].month}
+                {calendar[month].month} - {monthDay} - {year}
               </h2>
               <table>
                 <thead>
                   <tr className="h-12.5">
-                    <th className="w-28 font-medium">Sunday</th>
-                    <th className="w-28 font-medium">Monday</th>
-                    <th className="w-28 font-medium">Tuesday</th>
-                    <th className="w-28 font-medium">Wednesday</th>
-                    <th className="w-28 font-medium">Thursday</th>
-                    <th className="w-28 font-medium">Friday</th>
-                    <th className="w-28 font-medium">Saturday</th>
+                    <th className="w-30 font-medium">Sunday</th>
+                    <th className="w-30 font-medium">Monday</th>
+                    <th className="w-30 font-medium">Tuesday</th>
+                    <th className="w-30 font-medium">Wednesday</th>
+                    <th className="w-30 font-medium">Thursday</th>
+                    <th className="w-30 font-medium">Friday</th>
+                    <th className="w-30 font-medium">Saturday</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -128,8 +122,36 @@ function Calendar() {
                           return (
                             <td
                               key={index}
-                              className={`${monthDay === column ? "border-blue-300 border-2" : "border-gray-200 border"} pl-3 h-25 font-medium text-xs rounded-md relative`}
+                              className={`${monthDay === column ? "border-blue-300 border-2" : "border-gray-200 border"}  h-25 pt-2 pb-8 px-2 font-medium text-xs rounded-md relative`}
                             >
+                              {(() => {
+                                const booksThatDay = reservedBooks.filter(
+                                  (book) => {
+                                    const d = new Date(book.expires_in);
+
+                                    return (
+                                      d.getDate() === column &&
+                                      d.getMonth() === month &&
+                                      d.getFullYear() === year
+                                    );
+                                  },
+                                );
+
+                                if (booksThatDay.length === 0) return null;
+
+                                return (
+                                  <div className="flex flex-col gap-2">
+                                    <h3 className="text-blue-600">
+                                      Books expired in:
+                                    </h3>
+
+                                    {booksThatDay.map((book) => (
+                                      <p key={book.id}>- {book.title}</p>
+                                    ))}
+                                  </div>
+                                );
+                              })()}
+
                               <h4
                                 className={` absolute bottom-2 right-2 text-gray-700`}
                               >

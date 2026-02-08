@@ -8,6 +8,32 @@ export type BooksType = {
   created_at: Date;
 };
 
+export const reserveBook = async (req: Request, res: Response) => {
+  const { book_id } = req.params;
+  const { expires_in } = req.body;
+
+  const reservedBook = await connection.query(
+    `INSERT INTO user_reserved_books 
+    (user_id, book_id, expires_in) 
+    VALUES ($1, $2, $3) RETURNING *`,
+    [req.userData.id, book_id, expires_in],
+  );
+
+  res.json(reservedBook);
+};
+
+export const getUserReservedBooks = async (req: Request, res: Response) => {
+  const reserverdsBooks = await connection.query(
+    `SELECT b.title, b.sinopsis, u_r_b.reserved_in, u_r_b.expires_in, b.cover, b.id
+      FROM user_reserved_books u_r_b 
+      JOIN books b ON b.id = u_r_b.book_id
+     WHERE u_r_b.user_id = $1`,
+    [req.userData.id],
+  );
+
+  res.json(reserverdsBooks.rows);
+};
+
 export const addBooks = async (req: Request, res: Response) => {
   const { book_id } = req.params;
 
