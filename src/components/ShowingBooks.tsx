@@ -10,7 +10,6 @@ function ShowingBooks({ bookData, booksPerPage }: ShowingBooksProps) {
   const { setShowModals, showModals, setBookId } = useContextHook();
   return (
     <>
-      {" "}
       {bookData.length > 0 && (
         <>
           {bookData?.slice(0, booksPerPage).map((book) => {

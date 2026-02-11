@@ -70,7 +70,9 @@ function Home() {
         <Nav />
 
         <BookSection
-          booksLength={books.length}
+          sectionType="recommendedBooks"
+          booksPerPage={booksPerPage.reccommendedPerPage}
+          books={books}
           iconColor="#f22b2b"
           TitleIcon={FaFire}
           title="Recommended"
@@ -89,7 +91,9 @@ function Home() {
         />
 
         <BookSection
-          booksLength={mostLikedBooks.length}
+          sectionType="mostLikedBooks"
+          booksPerPage={booksPerPage.mostLikedPerPage}
+          books={mostLikedBooks}
           iconColor="#f22b2b"
           TitleIcon={FaFire}
           title="Most liked"

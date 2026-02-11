@@ -42,15 +42,6 @@ router.get("/user/get", authToken, getUser);
 
 // BOOKS APIs
 
-router.post("/books/create", authToken, authAdmin, createBooks);
-router.patch(
-  "/books/update/:book_id",
-  authToken,
-  authAdmin,
-  handleImg.single("cover"),
-  updateBooks,
-);
-router.delete("/books/delete/:book_id", authToken, authAdmin, deleteBooks);
 router.get("/books/search", authToken, searchBooks);
 router.get("/books/get/mostLiked", authToken, getMostLikedBooks);
 router.get("/books/get/:book_id", authToken, getBook);
@@ -71,6 +62,16 @@ router.get("/notifications/get", authToken, getUserNotifications);
 router.delete("/notifications/delete/all", authToken, deleteUserNotifications);
 
 // ADMIN APIs
+
+router.post("/books/create", authToken, authAdmin, createBooks);
+router.patch(
+  "/books/update/:book_id",
+  authToken,
+  authAdmin,
+  handleImg.single("cover"),
+  updateBooks,
+);
+router.delete("/books/delete/:book_id", authToken, authAdmin, deleteBooks);
 
 // MULTER APIs
 

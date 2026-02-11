@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
 import type { BooksType } from "../types/booksType";
-import { FaBookBookmark, FaDownload } from "react-icons/fa6";
+import { FaBookBookmark, FaRegCalendarCheck } from "react-icons/fa6";
 import CheckBook from "../components/CheckBook";
 import useContextHook from "../hooks/useContextHook";
 import ShowingBooks from "../components/ShowingBooks";
@@ -36,9 +36,11 @@ function SavedBooks() {
         <Nav />
 
         <BookSection
-          booksLength={reservedBooks.length}
-          iconColor="#27d844"
-          TitleIcon={FaDownload}
+          sectionType="reservedBooks"
+          booksPerPage={booksPerPage.reservedBooksPerPage}
+          books={reservedBooks}
+          iconColor="#51A2FF"
+          TitleIcon={FaRegCalendarCheck}
           title="Reserved books"
           onShowMore={() =>
             setBooksPerPage({
@@ -55,7 +57,9 @@ function SavedBooks() {
         />
 
         <BookSection
-          booksLength={userSavedBooks.length}
+          sectionType="savedBooks"
+          booksPerPage={booksPerPage.savedBooksPerPage}
+          books={userSavedBooks}
           iconColor="#feb302"
           TitleIcon={FaBookBookmark}
           title="Saved books"

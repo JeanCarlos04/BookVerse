@@ -9,6 +9,7 @@ import {
 import useContextHook from "../hooks/useContextHook";
 import { useEffect } from "react";
 import type { BooksType } from "../types/booksType";
+import ToastModal from "./UX/ToastModal";
 
 type CheckBookProps = {
   book_id: BooksType["id"];
@@ -26,6 +27,7 @@ function CheckBook({ book_id }: CheckBookProps) {
     checkBookData,
     handleReserveBooks,
     reservedBooks,
+    setToastType,
   } = useContextHook();
 
   const getBook = async () => {
@@ -145,14 +147,20 @@ function CheckBook({ book_id }: CheckBookProps) {
             </div>
 
             <button
-              onClick={() =>
-                isReserved
-                  ? null
-                  : handleReserveBooks(
-                      book_id,
-                      new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                    )
-              }
+              onClick={() => {
+                if (isReserved) {
+                  setToastType({
+                    type: "delete",
+                    message: "This book is already reserved.",
+                  });
+                  return null;
+                } else {
+                  handleReserveBooks(
+                    book_id,
+                    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                  );
+                }
+              }}
               className={`${isReserved ? "bg-green-500 hover:bg-green-600 text-white" : "bg-[#ffffff] hover:bg-gray-100"}  duration-150 font-medium w-full  flex items-center gap-2 justify-center text-black py-1 rounded-md cursor-pointer`}
             >
               <FaBookBookmark /> {isReserved ? "Reserved" : "Reserve"}
@@ -160,6 +168,7 @@ function CheckBook({ book_id }: CheckBookProps) {
           </section>
         </aside>
       )}
+      <ToastModal />
     </>
   );
 }

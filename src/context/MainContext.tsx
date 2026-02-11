@@ -1,13 +1,21 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import type { UsersType } from "../types/usersType";
 import type { BooksReservedType, BooksType } from "../types/booksType";
 import type { ToastType } from "../types/toastType";
 import { useNavigate } from "react-router-dom";
 import type { NotificationsType } from "../types/NotificationsType";
+import type { IconType } from "react-icons";
 
 interface ContexTypeProps {
   children: React.ReactNode;
 }
+
+type BookSectionDataType = {
+  title: string;
+  icon: IconType | null;
+  books: BooksType[];
+  children: React.ReactNode;
+};
 
 type ShowModalsType = "showModal" | "hideModal" | "disappearModal";
 type ShowModalsState = Record<string, ShowModalsType>;
@@ -37,6 +45,8 @@ interface ContextType {
   booksPerPage: Record<string, number>;
   handleReserveBooks: (book_id: number, expires_in: Date) => void;
   reservedBooks: BooksReservedType[];
+  setBookSectionData: React.Dispatch<React.SetStateAction<BookSectionDataType>>;
+  bookSectionData: BookSectionDataType;
 }
 
 const defaultContextTypes = {
@@ -66,6 +76,13 @@ const defaultContextTypes = {
   booksPerPage: {},
   handleReserveBooks: () => {},
   reservedBooks: [],
+  setBookSectionData: () => {},
+  bookSectionData: {
+    title: "",
+    icon: null,
+    books: [],
+    children: null,
+  },
 };
 
 const MainContext = createContext<ContextType>(defaultContextTypes);
@@ -86,13 +103,19 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
   const [toastType, setToastType] = useState<ToastType>();
   const [notifications, setNotifications] = useState<NotificationsType[]>([]);
   const [booksPerPage, setBooksPerPage] = useState<Record<string, number>>({
-    reccommendedPerPage: 10,
+    reccommendedPerPage: 5,
     mostLikedPerPage: 10,
     savedBooksPerPage: 10,
     favoriteBooksPerPage: 10,
     reservedBooksPerPage: 10,
   });
   const [reservedBooks, setReservedBooks] = useState<BooksReservedType[]>([]);
+  const [bookSectionData, setBookSectionData] = useState<BookSectionDataType>({
+    title: "",
+    icon: null,
+    books: [],
+    children: null,
+  });
 
   const getUser = async () => {
     try {
@@ -260,6 +283,8 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
         setBooksPerPage,
         handleReserveBooks,
         reservedBooks,
+        bookSectionData,
+        setBookSectionData,
       }}
     >
       {children}

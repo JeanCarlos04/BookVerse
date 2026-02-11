@@ -37,7 +37,9 @@ function FavoriteBooks() {
         <Nav />
 
         <BookSection
-          booksLength={favoriteBooks.length}
+          sectionType="favoriteBooks"
+          booksPerPage={booksPerPage.favoriteBooksPerPage}
+          books={favoriteBooks}
           iconColor="#f22b2b"
           TitleIcon={FaRegHeart}
           title="Favorite books"
