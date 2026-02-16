@@ -15,6 +15,7 @@ import {
   getBook,
   searchBooks,
   getMostLikedBooks,
+  getBookByTitle,
 } from "../controllers/books_controllers.ts";
 import {
   addBooks,
@@ -45,6 +46,7 @@ router.get("/user/get", authToken, getUser);
 router.get("/books/search", authToken, searchBooks);
 router.get("/books/get/mostLiked", authToken, getMostLikedBooks);
 router.get("/books/get/:book_id", authToken, getBook);
+router.get("/books/getByTitle", authToken, getBookByTitle);
 
 // USER BOOKS APIs
 
@@ -63,7 +65,14 @@ router.delete("/notifications/delete/all", authToken, deleteUserNotifications);
 
 // ADMIN APIs
 
-router.post("/books/create", authToken, authAdmin, createBooks);
+router.post(
+  "/books/create",
+  authToken,
+  authAdmin,
+  handleImg.single("cover"),
+  createBooks,
+);
+
 router.patch(
   "/books/update/:book_id",
   authToken,

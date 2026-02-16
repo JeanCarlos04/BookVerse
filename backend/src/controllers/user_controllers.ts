@@ -83,8 +83,6 @@ export const uploadAvatar = async (req: Request, res: Response) => {
   const avatar = req.file?.filename;
   const { username } = req.body;
 
-  console.log(avatar);
-
   await connection.query(
     `
     UPDATE users SET 

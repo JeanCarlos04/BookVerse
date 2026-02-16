@@ -5,6 +5,7 @@ import type { ToastType } from "../types/toastType";
 import { useNavigate } from "react-router-dom";
 import type { NotificationsType } from "../types/NotificationsType";
 import type { IconType } from "react-icons";
+import fetchFunction from "../utils/fetchFunction";
 
 interface ContexTypeProps {
   children: React.ReactNode;
@@ -103,7 +104,7 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
   const [toastType, setToastType] = useState<ToastType>();
   const [notifications, setNotifications] = useState<NotificationsType[]>([]);
   const [booksPerPage, setBooksPerPage] = useState<Record<string, number>>({
-    reccommendedPerPage: 5,
+    reccommendedPerPage: 10,
     mostLikedPerPage: 10,
     savedBooksPerPage: 10,
     favoriteBooksPerPage: 10,
@@ -119,52 +120,37 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
 
   const getUser = async () => {
     try {
-      const res = await fetch("http://localhost:3000/user/get", {
-        credentials: "include",
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setMyProfile(data);
-      } else {
-        navigate("/login");
-      }
+      const data = await fetchFunction<UsersType>(
+        "http://localhost:3000/user/get",
+      );
+      setMyProfile(data);
     } catch (err) {
       console.error(err);
+      navigate("/login");
     }
   };
 
   const getUserBooks = async () => {
-    const res = await fetch("http://localhost:3000/user/books/get", {
-      credentials: "include",
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      setUserBooks(data);
-    }
+    const data = await fetchFunction<BooksType[]>(
+      "http://localhost:3000/user/books/get",
+    );
+    setUserBooks(data);
   };
 
   const getUserReservedBooks = async () => {
-    const res = await fetch("http://localhost:3000/user/books/get/reserved", {
-      credentials: "include",
-    });
+    const data = await fetchFunction<BooksReservedType[]>(
+      "http://localhost:3000/user/books/get/reserved",
+    );
 
-    if (res.ok) {
-      const data = await res.json();
-      setReservedBooks(data);
-    }
+    setReservedBooks(data);
   };
 
   const getUserFavoriteBooks = async () => {
-    const res = await fetch("http://localhost:3000/user/books/get/liked", {
-      credentials: "include",
-    });
+    const data = await fetchFunction<BooksReservedType[]>(
+      "http://localhost:3000/user/books/get/liked",
+    );
 
-    if (res.ok) {
-      const data = await res.json();
-      setFavoriteBooks(data);
-    }
+    setFavoriteBooks(data);
   };
 
   useEffect(() => {
@@ -205,14 +191,11 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
   };
 
   const createNotification = async (title: string, description: string) => {
-    const res = await fetch("http://localhost:3000/notification/create", {
+    await fetch("http://localhost:3000/notification/create", {
       credentials: "include",
       method: "POSTS",
       body: JSON.stringify({ title, description }),
     });
-
-    const data = await res.json();
-    console.log(data);
   };
 
   const addBooks = async (book_id: BooksType["id"]) => {
