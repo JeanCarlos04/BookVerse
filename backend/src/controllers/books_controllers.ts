@@ -2,11 +2,15 @@ import connection from "../connection/pg_connection.ts";
 import type { Response, Request } from "./user_controllers.ts";
 
 export const createBooks = async (req: Request, res: Response) => {
-  const { title, sinopsis } = req.body;
+  const { title, sinopsis, author } = req.body;
+  const cover = req.file;
+
+  if (!cover) return res.status(400).json({ error: "Image is required" });
+  const coverName = cover.originalname;
 
   const created_book = await connection.query(
-    "INSERT INTO books (title, sinopsis) VALUES ($1,$2) RETURNING *",
-    [title, sinopsis],
+    "INSERT INTO books (title, sinopsis, cover, author) VALUES ($1,$2,$3,$4) RETURNING *",
+    [title, sinopsis, coverName, author],
   );
 
   res.json(created_book.rows[0]);
@@ -69,6 +73,17 @@ export const getBook = async (req: Request, res: Response) => {
   res.json(foundedBook.rows[0]);
 };
 
+export const getBookByTitle = async (req: Request, res: Response) => {
+  const { title } = req.query;
+
+  const foundedBook = await connection.query(
+    "SELECT * FROM books WHERE title ILIKE $1",
+    [`%${title}%`],
+  );
+
+  res.json(foundedBook.rows[0]);
+};
+
 export const getMostLikedBooks = async (req: Request, res: Response) => {
   try {
     const mostLikedBooks = await connection.query(
@@ -80,4 +95,3 @@ export const getMostLikedBooks = async (req: Request, res: Response) => {
     console.error(err);
   }
 };
-

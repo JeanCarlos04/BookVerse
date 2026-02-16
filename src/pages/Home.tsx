@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useState, useRef } from "react";
 import type { BooksType } from "../types/booksType";
 import ToastModal from "../components/UX/ToastModal";
+import fetchFunction from "../utils/fetchFunction";
 
 function Home() {
   const { showModals, bookId, search, setBooksPerPage, booksPerPage } =
@@ -33,14 +34,11 @@ function Home() {
   };
 
   const getMostLikedBooks = async () => {
-    const res = await fetch("http://localhost:3000/books/get/mostLiked", {
-      credentials: "include",
-    });
+    const data = await fetchFunction<BooksType[]>(
+      "http://localhost:3000/books/get/mostLiked",
+    );
 
-    const data = await res.json();
-    if (res.ok) {
-      setMostLikedBooks(data);
-    }
+    setMostLikedBooks(data);
   };
 
   useEffect(() => {

@@ -1,8 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import useContextHook from "./hooks/useContextHook";
+
+// ANIMATIONS STYLES
+
 import "./styles/modalsAnimations.css";
 import "./styles/toastAnimation.css";
-// import useContextHook from "./hooks/useContextHook";
+
+// PAGES
 
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
@@ -12,10 +17,12 @@ const FavoriteBooks = lazy(() => import("./pages/FavoriteBook"));
 const Calender = lazy(() => import("./pages/Calendar"));
 const ShowSpecificSection = lazy(() => import("./pages/ShowSpecificSection"));
 
-// const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+// ADMIN PANEL
+
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 
 function App() {
-  // const { myProfile } = useContextHook();
+  const { myProfile } = useContextHook();
 
   return (
     <Suspense fallback={<h1>Loading...</h1>}>
@@ -27,10 +34,13 @@ function App() {
         <Route path="/favoriteBooks" element={<FavoriteBooks />} />
         <Route path="/calendar" element={<Calender />} />
         <Route path="/calendar" element={<Calender />} />
-        <Route path="/bookSection/:sectionType" element={<ShowSpecificSection />} />
-        {/* {myProfile?.role === "ADMIN" ? (
+        <Route
+          path="/bookSection/:sectionType"
+          element={<ShowSpecificSection />}
+        />
+        {myProfile?.role === "ADMIN" ? (
           <Route path="/adminPanel" element={<AdminPanel />} />
-        ) : null} */}
+        ) : null}
       </Routes>
     </Suspense>
   );

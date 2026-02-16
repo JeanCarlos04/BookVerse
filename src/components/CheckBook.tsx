@@ -10,6 +10,7 @@ import useContextHook from "../hooks/useContextHook";
 import { useEffect } from "react";
 import type { BooksType } from "../types/booksType";
 import ToastModal from "./UX/ToastModal";
+import fetchFunction from "../utils/fetchFunction";
 
 type CheckBookProps = {
   book_id: BooksType["id"];
@@ -31,19 +32,15 @@ function CheckBook({ book_id }: CheckBookProps) {
   } = useContextHook();
 
   const getBook = async () => {
-    const res = await fetch(`http://localhost:3000/books/get/${book_id}`, {
-      credentials: "include",
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setCheckBookData(data);
-    }
+    const data = await fetchFunction<BooksType>(
+      `http://localhost:3000/books/get/${book_id}`,
+    );
+
+    setCheckBookData(data);
   };
 
   const isReserved = reservedBooks.some((book) => book.id === book_id);
-
   const allUserBooks: BooksType["id"][] = userBooks?.map((book) => book.id);
-
   const allFavoriteBooks: BooksType["id"][] = favorieBooks?.map(
     (book) => book.id,
   );

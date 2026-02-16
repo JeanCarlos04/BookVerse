@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
-import type { BooksType } from "../types/booksType";
 import { FaBookBookmark, FaRegCalendarCheck } from "react-icons/fa6";
 import CheckBook from "../components/CheckBook";
 import useContextHook from "../hooks/useContextHook";
@@ -9,25 +7,14 @@ import ShowingBooks from "../components/ShowingBooks";
 import BookSection from "../components/BookSection";
 
 function SavedBooks() {
-  const [userSavedBooks, setUserSavedBooks] = useState<BooksType[]>([]);
-  const { showModals, bookId, booksPerPage, setBooksPerPage, reservedBooks } =
-    useContextHook();
-
-  const getUserBooks = async () => {
-    const res = await fetch("http://localhost:3000/user/books/get", {
-      credentials: "include",
-    });
-    const data = await res.json();
-    if (res.ok) setUserSavedBooks(data);
-  };
-
-  useEffect(() => {
-    const init = async () => {
-      getUserBooks();
-    };
-
-    init();
-  }, []);
+  const {
+    showModals,
+    bookId,
+    booksPerPage,
+    setBooksPerPage,
+    reservedBooks,
+    userBooks,
+  } = useContextHook();
 
   return (
     <main className="flex w-full h-full">
@@ -59,7 +46,7 @@ function SavedBooks() {
         <BookSection
           sectionType="savedBooks"
           booksPerPage={booksPerPage.savedBooksPerPage}
-          books={userSavedBooks}
+          books={userBooks}
           iconColor="#feb302"
           TitleIcon={FaBookBookmark}
           title="Saved books"
@@ -72,7 +59,7 @@ function SavedBooks() {
           children={
             <ShowingBooks
               booksPerPage={booksPerPage.savedBooksPerPage}
-              bookData={userSavedBooks}
+              bookData={userBooks}
             />
           }
         />

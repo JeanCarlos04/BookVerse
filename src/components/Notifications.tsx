@@ -1,21 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEye, FaTrashCan, FaRegBellSlash } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
 import ConfirmDelete from "./UX/ConfirmDelete";
+import fetchFunction from "../utils/fetchFunction";
+import type { NotificationsType } from "../types/NotificationsType";
 
 function Notifications() {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const { setShowModals, showModals, notifications, setNotifications } =
     useContextHook();
 
   const getNotifications = async () => {
-    const res = await fetch("http://localhost:3000/notifications/get", {
-      credentials: "include",
-    });
+    const data = await fetchFunction<NotificationsType[]>(
+      "http://localhost:3000/notifications/get",
+    );
 
-    if (res.ok) {
-      const data = await res.json();
-      setNotifications(data);
-    }
+    setNotifications(data);
   };
 
   const deleteAllNotifications = async () => {
@@ -67,6 +67,7 @@ function Notifications() {
                     ...showModals,
                     confirmDeleteNotification: "showModal",
                   });
+                  setShowConfirmModal(true);
                 }}
                 className="text-red-500 cursor-pointer"
               >
@@ -80,7 +81,6 @@ function Notifications() {
                 key={noti.description}
                 className="flex flex-col pt-2 gap-1 w-68.75 relative border-t-2 border-gray-200"
               >
-                {/* <img className="size-[40px] rounded" src={`http://localhost:3000/uploads/${noti.avatar_url}`} /> */}
                 <h2 className="font-medium text-sm">{noti.title}</h2>
                 <div className="flex gap-2">
                   <p className=" text-gray-600 text-sm">{noti.description}</p>
@@ -115,6 +115,8 @@ function Notifications() {
       )}
       {
         <ConfirmDelete
+          setHideConfirmDelete={setShowConfirmModal}
+          showConfirmDelete={showConfirmModal}
           title="all notifications"
           handleDeleteFn={deleteAllNotifications}
         />
