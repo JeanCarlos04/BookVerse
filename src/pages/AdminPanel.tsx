@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Aside from "../components/Aside";
 import Nav from "../components/Nav";
 import ToastModal from "../components/UX/ToastModal";
@@ -27,9 +27,13 @@ export function AdminPanel() {
   const [searchInputBook, setSearchInputBook] = useState("");
   const [foundedBook, setFoundedBook] = useState<BooksType>();
   const { myProfile } = useContextHook();
+  const [imagePreview, setImagePreview] = useState<string | undefined>(
+    undefined,
+  );
   const {
     register,
     reset,
+    watch,
     formState: { errors },
     handleSubmit,
   } = useForm<FormType>();
@@ -73,6 +77,14 @@ export function AdminPanel() {
     });
   };
 
+  const handleImagePreview = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0];
+
+    const convertedFile = URL.createObjectURL(file);
+
+    setImagePreview(convertedFile);
+  };
+
   const handleCreateBook = handleSubmit(async (data: FormType) => {
     const { title, sinopsis, author, cover } = data;
 
@@ -104,6 +116,7 @@ export function AdminPanel() {
     if (selectPanelFunction === "create" || selectPanelFunction === "edit") {
       return (
         <CreateBookPanel
+          handleImagePreview={handleImagePreview}
           selectPanelFunction={selectPanelFunction}
           register={register}
           errors={errors}
@@ -123,17 +136,17 @@ export function AdminPanel() {
 
   return (
     <>
-      <main className="flex w-full">
+      <main className="flex h-screen w-full bg-gray-50">
         <Aside />
         <div className="w-full">
           <Nav />
 
-          <div className="flex items-center flex-col pt-8 px-24 gap-4">
-            <header className="flex gap-3">
+          <div className="flex items-center flex-col pt-8 px-36 gap-4">
+            <header className="flex gap-3 w-full justify-center py-3 bg-white rounded shadow">
               <h1 className="text-xl  font-medium">Admin Panel</h1>
 
               <select
-                className="bg-gray-50 rounded-md shadow px-2"
+                className="bg-gray-50 rounded border border-gray-100 shadow px-2"
                 onChange={(e) =>
                   setSelectPanelFunction(e.target.value as SelectPanel)
                 }
@@ -144,25 +157,29 @@ export function AdminPanel() {
               </select>
             </header>
 
-            <div className="flex gap-8">
+            <div className="flex gap-8 items-center px-4 py-4 bg-white shadow h-fit w-full justify-center rounded-xl">
               {handlePanel()}
-              <section className="flex flex-col gap-4 w-58 py-4">
+              <section className="flex flex-col gap-4 w-58">
                 <header className="text-lg font-medium flex items-center gap-2">
                   Books Visualizer <FaRegEye className="text-gray-600" />
                 </header>
 
                 <div className="flex flex-col gap-3 px-6 bg-[#082030] rounded-md py-4">
-                  <img className="w-50 h-75 rounded-md shadow bg-gray-300" />
+                  <img
+                    src={imagePreview}
+                    className="w-50 h-75 rounded-md shadow bg-gray-300"
+                  />
                   <h2 className="text-center font-medium text-lg text-white">
-                    Las kbras olvidadas de narnia
+                    {watch("title") || "The best example."}
                   </h2>
                   <h3 className="text-center text-yellow-400 text-sm">
-                    Jhon Doe
+                    {watch("author") || "Jhon Doe"}
                   </h3>
 
                   <p className="text-center text-sm text-gray-200">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Eius, labore, sequi aperiam illo.
+                    {watch("sinopsis") ||
+                      `Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Eius, labore, sequi aperiam illo.`}
                   </p>
                 </div>
               </section>

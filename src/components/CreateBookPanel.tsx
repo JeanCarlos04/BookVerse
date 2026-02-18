@@ -10,6 +10,7 @@ type CreateBookPanelProps = {
   setSearchInputBook: React.Dispatch<React.SetStateAction<string>>;
   errors: FieldErrors<FormType>;
   handleCreateBook: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  handleImagePreview: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function CreateBookPanel({
@@ -18,9 +19,10 @@ function CreateBookPanel({
   errors,
   setSearchInputBook,
   handleCreateBook,
+  handleImagePreview,
 }: CreateBookPanelProps) {
   return (
-    <section className="p-4 flex flex-col gap-4">
+    <section className=" flex flex-col gap-4">
       <header>
         <h3 className="flex gap-2 items-center text-lg font-medium">
           {selectPanelFunction === "create" ? "Create books" : "Edit books"}{" "}
@@ -81,6 +83,7 @@ function CreateBookPanel({
           type="file"
           {...register("cover", {
             required: "Cover field is required",
+            onChange: (e) => handleImagePreview(e),
           })}
         />
         {errors.cover && (
@@ -96,7 +99,7 @@ function CreateBookPanel({
           Cover <FaRegImage className="text-xl" />
         </label>
         <button
-          className={`${selectPanelFunction === "create" ? "bg-blue-500" : "bg-green-500"}  rounded text-white font-medium h-8`}
+          className={`${selectPanelFunction === "create" ? "bg-blue-500" : "bg-green-500"} rounded text-white font-medium h-8 shadow`}
         >
           {selectPanelFunction === "create" ? "Create" : "Edit"}
         </button>
