@@ -27,7 +27,7 @@ export const getUserReservedBooks = async (req: Request, res: Response) => {
     `SELECT b.title, b.sinopsis, u_r_b.reserved_in, u_r_b.expires_in, b.cover, b.id
       FROM user_reserved_books u_r_b 
       JOIN books b ON b.id = u_r_b.book_id
-     WHERE u_r_b.user_id = $1`,
+     WHERE u_r_b.user_id = $1 AND active = true`,
     [req.userData.id],
   );
 

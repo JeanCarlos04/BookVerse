@@ -5,11 +5,15 @@ import {
   FaRegHeart,
   FaRegCalendarCheck,
 } from "react-icons/fa";
-import { FaHouseChimney, FaArrowRightFromBracket } from "react-icons/fa6";
+import {
+  FaHouseChimney,
+  FaArrowRightFromBracket,
+  FaUserTie,
+} from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
 
 function Aside() {
-  const { logout } = useContextHook();
+  const { logout, myProfile } = useContextHook();
 
   return (
     <div className="w-(--aside-width) max-w-50 min-w-50">
@@ -85,12 +89,20 @@ function Aside() {
               </Link>
             </li>
 
-            <li className="py-1 px-4">
-              <Link to={"/Profile"}></Link>
-            </li>
-            <li className="py-1 px-4">
-              <Link to={"/Profile"}></Link>
-            </li>
+            {myProfile?.role === "ADMIN" && (
+              <li className="py-1 group px-3 rounded duration-200">
+                <Link
+                  to={"/adminPanel"}
+                  className=" duration-200 text-gray-200 flex gap-2 items-center"
+                >
+                  <div className="size-6 flex group-hover:bg-blue-500 duration-200 justify-center items-center rounded bg-gray-800">
+                    {" "}
+                    <FaUserTie className=" group-hover:text-white text-gray-300" />
+                  </div>
+                  Admin
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
         <div

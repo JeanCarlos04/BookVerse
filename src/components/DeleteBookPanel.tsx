@@ -33,7 +33,7 @@ function DeleteBookPanel({
               confirmDeleteNotification: "showModal",
             });
           }}
-          className="text-white bg-red-500 font-medium rounded px-4 h-7.5"
+          className="text-white bg-red-500 shadow font-medium rounded px-4 h-7.5"
         >
           Delete book
         </button>
