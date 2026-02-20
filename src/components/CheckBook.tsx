@@ -7,10 +7,11 @@ import {
   FaHeart,
 } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { BooksType } from "../types/booksType";
 import ToastModal from "./UX/ToastModal";
 import fetchFunction from "../utils/fetchFunction";
+import ConfirmDelete from "./UX/ConfirmDelete";
 
 type CheckBookProps = {
   book_id: BooksType["id"];
@@ -31,6 +32,21 @@ function CheckBook({ book_id }: CheckBookProps) {
     setToastType,
   } = useContextHook();
 
+  const unreserveBook = async () => {
+    const res = await fetch(
+      `http://localhost:3000/user/books/return/${book_id}`,
+      { credentials: "include", method: "PATCH" },
+    );
+    if (res.ok) {
+      console.log(book_id);
+      setToastType({
+        message: "Book returned",
+        type: "delete",
+        class: "showToast",
+      });
+    }
+  };
+
   const getBook = async () => {
     const data = await fetchFunction<BooksType>(
       `http://localhost:3000/books/get/${book_id}`,
@@ -39,6 +55,7 @@ function CheckBook({ book_id }: CheckBookProps) {
     setCheckBookData(data);
   };
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const isReserved = reservedBooks.some((book) => book.id === book_id);
   const allUserBooks: BooksType["id"][] = userBooks?.map((book) => book.id);
   const allFavoriteBooks: BooksType["id"][] = favorieBooks?.map(
@@ -146,10 +163,7 @@ function CheckBook({ book_id }: CheckBookProps) {
             <button
               onClick={() => {
                 if (isReserved) {
-                  setToastType({
-                    type: "delete",
-                    message: "This book is already reserved.",
-                  });
+                  setShowConfirmModal(true);
                   return null;
                 } else {
                   handleReserveBooks(
@@ -165,6 +179,12 @@ function CheckBook({ book_id }: CheckBookProps) {
           </section>
         </aside>
       )}
+      <ConfirmDelete
+        handleDeleteFn={unreserveBook}
+        title="this book that is already reserved"
+        setHideConfirmDelete={setShowConfirmModal}
+        showConfirmDelete={showConfirmModal}
+      />
       <ToastModal />
     </>
   );

@@ -24,6 +24,7 @@ import {
   getLikedBooks,
   reserveBook,
   getUserReservedBooks,
+  returnBook,
 } from "../controllers/user_books_controllers.ts";
 import {
   createNotification,
@@ -31,6 +32,7 @@ import {
   deleteUserNotifications,
 } from "../controllers/notification_controllers.ts";
 import { authAdmin } from "../middlewares/authAdmin.ts";
+import { getUserHistory } from "../controllers/user_history_controllers.ts";
 
 const router = Router();
 
@@ -56,6 +58,11 @@ router.get("/user/books/get", authToken, getUserSavedBooks);
 router.post("/user/books/like/:book_id", authToken, addLikes);
 router.get("/user/books/get/liked", authToken, getLikedBooks);
 router.get("/user/books/get/reserved", authToken, getUserReservedBooks);
+router.patch("/user/books/return/:book_id", authToken, returnBook);
+
+// USER HISTORY APIs
+
+router.get("/user/history/get", authToken, getUserHistory);
 
 // NOTIFICATION APIs
 

@@ -109,9 +109,7 @@ function Home() {
           }
         />
 
-        {bookId && showModals.checkBookModal && (
-          <>{<CheckBook book_id={bookId} />}</>
-        )}
+        {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
       </div>
 
       <ToastModal />

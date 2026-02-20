@@ -12,14 +12,40 @@ export const reserveBook = async (req: Request, res: Response) => {
   const { book_id } = req.params;
   const { expires_in } = req.body;
 
-  const reservedBook = await connection.query(
-    `INSERT INTO user_reserved_books 
-    (user_id, book_id, expires_in) 
-    VALUES ($1, $2, $3) RETURNING *`,
-    [req.userData.id, book_id, expires_in],
+  const founded_book = await connection.query(
+    "SELECT * FROM user_reserved_books WHERE user_id = $1 AND book_id = $2",
+    [req.userData.id, book_id],
   );
 
-  res.json(reservedBook);
+  if (founded_book.rows.length < 1) {
+    const reservedBook = await connection.query(
+      `INSERT INTO user_reserved_books (user_id, book_id, expires_in) 
+      VALUES ($1, $2, $3) RETURNING *`,
+      [req.userData.id, book_id, expires_in],
+    );
+
+    res.json(reservedBook);
+  } else {
+    const reservedBook = await connection.query(
+      `UPDATE user_reserved_books 
+      SET status = 'reserved'
+      WHERE user_id = $1 AND book_id = $2 RETURNING *`,
+      [req.userData.id, book_id],
+    );
+
+    res.json(reservedBook);
+  }
+};
+
+export const returnBook = async (req: Request, res: Response) => {
+  const { book_id } = req.params;
+
+  const unreservedBook = await connection.query(
+    "UPDATE user_reserved_books SET status = 'returned' WHERE book_id = $1 RETURNING *",
+    [book_id],
+  );
+
+  res.json(unreservedBook.rows);
 };
 
 export const getUserReservedBooks = async (req: Request, res: Response) => {
@@ -27,7 +53,7 @@ export const getUserReservedBooks = async (req: Request, res: Response) => {
     `SELECT b.title, b.sinopsis, u_r_b.reserved_in, u_r_b.expires_in, b.cover, b.id
       FROM user_reserved_books u_r_b 
       JOIN books b ON b.id = u_r_b.book_id
-     WHERE u_r_b.user_id = $1 AND active = true`,
+     WHERE u_r_b.user_id = $1 AND status = 'reserved'`,
     [req.userData.id],
   );
 
