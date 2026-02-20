@@ -64,9 +64,7 @@ function SavedBooks() {
           }
         />
       </div>
-      {bookId && showModals.checkBookModal && (
-        <>{<CheckBook book_id={bookId} />}</>
-      )}
+      {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>
   );
 }

@@ -13,4 +13,9 @@ export interface BooksType {
 export type BooksReservedType = BooksType & {
   expires_in: Date;
   reserved_in: Date;
-}
+};
+
+export type HistoryBooksType = BooksType & {
+  created_at: Date;
+  status_type: string;
+};

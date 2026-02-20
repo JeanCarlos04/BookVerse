@@ -16,6 +16,7 @@ const SavedBooks = lazy(() => import("./pages/SavedBooks"));
 const FavoriteBooks = lazy(() => import("./pages/FavoriteBook"));
 const Calender = lazy(() => import("./pages/Calendar"));
 const ShowSpecificSection = lazy(() => import("./pages/ShowSpecificSection"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 // ADMIN PANEL
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/userSavedBooks" element={<SavedBooks />} />
         <Route path="/favoriteBooks" element={<FavoriteBooks />} />
         <Route path="/calendar" element={<Calender />} />

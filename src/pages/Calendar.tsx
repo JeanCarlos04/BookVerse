@@ -171,7 +171,7 @@ function Calendar() {
           </div>
 
           {/* {bookId && showModals.checkBookModal && (
-            <>{<CheckBook book_id={bookId} />}</>
+            <CheckBook book_id={bookId} />
           )} */}
         </div>
 
