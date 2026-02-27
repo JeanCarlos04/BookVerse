@@ -45,7 +45,7 @@ function Register() {
         />
         <p className="text-red-500">{errors.email?.message}</p>
         <input
-          type="text"
+          type="password"
           {...register("password", { required: "Password is required" })}
         />
         <p className="text-red-500">{errors.password?.message}</p>

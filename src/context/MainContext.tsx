@@ -4,21 +4,21 @@ import type { BooksReservedType, BooksType } from "../types/booksType";
 import type { ToastType } from "../types/toastType";
 import { useNavigate } from "react-router-dom";
 import type { NotificationsType } from "../types/NotificationsType";
-import type { IconType } from "react-icons";
 import fetchFunction from "../utils/fetchFunction";
+import fetchBooksFunction from "../utils/fetchBooksFunction";
 
 interface ContexTypeProps {
   children: React.ReactNode;
 }
 
-type BookSectionDataType = {
-  title: string;
-  icon: IconType | null;
-  books: BooksType[];
-  children: React.ReactNode;
+export type IsSectionEmpty = {
+  generalBooks: string | boolean | undefined;
+  userFavoriteBooks: string | boolean | undefined;
+  userReservedBooks: string | boolean | undefined;
+  userSavedBooks: string | boolean | undefined;
 };
 
-type ShowModalsType = "showModal" | "hideModal" | "disappearModal";
+export type ShowModalsType = "showModal" | "hideModal" | "disappearModal";
 type ShowModalsState = Record<string, ShowModalsType>;
 
 interface ContextType {
@@ -30,7 +30,7 @@ interface ContextType {
   showModals: ShowModalsState;
   addLike: (book_id: BooksType) => void;
   addBooks: (book_id: number) => void;
-  userBooks: BooksType[];
+  userSavedBooks: BooksType[];
   favorieBooks: BooksType[];
   setCheckBookData: React.Dispatch<React.SetStateAction<BooksType | undefined>>;
   checkBookData: BooksType | undefined;
@@ -46,8 +46,13 @@ interface ContextType {
   booksPerPage: Record<string, number>;
   handleReserveBooks: (book_id: number, expires_in: Date) => void;
   reservedBooks: BooksReservedType[];
-  setBookSectionData: React.Dispatch<React.SetStateAction<BookSectionDataType>>;
-  bookSectionData: BookSectionDataType;
+  booksLoading: IsSectionEmpty;
+  setBooksLoading: React.Dispatch<React.SetStateAction<IsSectionEmpty>>;
+  getUserSavedBooks: () => void;
+  getUserReservedBooks: () => void;
+  getUserFavoriteBooks: () => void;
+  setFilteredSectionBooks: React.Dispatch<React.SetStateAction<BooksType[]>>;
+  filteredSectionBooks: BooksType[];
 }
 
 const defaultContextTypes = {
@@ -61,7 +66,7 @@ const defaultContextTypes = {
   } as ShowModalsState,
   addLike: () => {},
   addBooks: () => {},
-  userBooks: [],
+  userSavedBooks: [],
   favorieBooks: [],
   setCheckBookData: () => {},
   checkBookData: undefined,
@@ -77,13 +82,18 @@ const defaultContextTypes = {
   booksPerPage: {},
   handleReserveBooks: () => {},
   reservedBooks: [],
-  setBookSectionData: () => {},
-  bookSectionData: {
-    title: "",
-    icon: null,
-    books: [],
-    children: null,
+  booksLoading: {
+    generalBooks: undefined,
+    userFavoriteBooks: undefined,
+    userReservedBooks: undefined,
+    userSavedBooks: undefined,
   },
+  setBooksLoading: () => {},
+  getUserSavedBooks: () => {},
+  getUserReservedBooks: () => {},
+  getUserFavoriteBooks: () => {},
+  setFilteredSectionBooks: () => {},
+  filteredSectionBooks: [],
 };
 
 const MainContext = createContext<ContextType>(defaultContextTypes);
@@ -92,7 +102,7 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
   const [myProfile, setMyProfile] = useState<UsersType>();
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const [userBooks, setUserBooks] = useState<BooksType[]>([]);
+  const [userSavedBooks, setUserSavedBooks] = useState<BooksType[]>([]);
   const [favorieBooks, setFavoriteBooks] = useState<BooksType[]>([]);
   const [showModals, setShowModals] = useState<ShowModalsState>({
     notificationModal: "disappearModal",
@@ -111,12 +121,15 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     reservedBooksPerPage: 10,
   });
   const [reservedBooks, setReservedBooks] = useState<BooksReservedType[]>([]);
-  const [bookSectionData, setBookSectionData] = useState<BookSectionDataType>({
-    title: "",
-    icon: null,
-    books: [],
-    children: null,
+  const [booksLoading, setBooksLoading] = useState<IsSectionEmpty>({
+    generalBooks: false,
+    userFavoriteBooks: false,
+    userReservedBooks: false,
+    userSavedBooks: false,
   });
+  const [filteredSectionBooks, setFilteredSectionBooks] = useState<BooksType[]>(
+    [],
+  );
 
   const getUser = async () => {
     try {
@@ -130,41 +143,71 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     }
   };
 
-  const getUserBooks = async () => {
-    const data = await fetchFunction<BooksType[]>(
-      "http://localhost:3000/user/books/get",
-    );
-    setUserBooks(data);
+  const getUserSavedBooks = async () => {
+    try {
+      const data = await fetchBooksFunction<BooksType[]>(
+        "http://localhost:3000/user/books/get",
+        setBooksLoading,
+
+        "userSavedBooks",
+      );
+
+      setUserSavedBooks(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const getUserReservedBooks = async () => {
-    const data = await fetchFunction<BooksReservedType[]>(
-      "http://localhost:3000/user/books/get/reserved",
-    );
+    try {
+      const data = await fetchBooksFunction<BooksReservedType[]>(
+        "http://localhost:3000/user/books/get/reserved",
+        setBooksLoading,
 
-    setReservedBooks(data);
+        "userReservedBooks",
+      );
+
+      setReservedBooks(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const getUserFavoriteBooks = async () => {
-    const data = await fetchFunction<BooksReservedType[]>(
-      "http://localhost:3000/user/books/get/liked",
-    );
+    try {
+      const data = await fetchBooksFunction<BooksReservedType[]>(
+        "http://localhost:3000/user/books/get/liked",
+        setBooksLoading,
 
-    setFavoriteBooks(data);
+        "userFavoriteBooks",
+      );
+
+      setFavoriteBooks(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
     const init = async () => {
+      getUser();
+    };
+
+    init();
+  }, []);
+
+  useEffect(() => {
+    const init = async () => {
+      if (!myProfile) return;
       await Promise.all([
-        getUser(),
-        getUserBooks(),
+        getUserSavedBooks(),
         getUserFavoriteBooks(),
         getUserReservedBooks(),
       ]);
     };
 
     init();
-  }, []);
+  }, [myProfile]);
 
   const addLike = async (book_id: BooksType) => {
     setFavoriteBooks((prev) => {
@@ -205,7 +248,7 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
     });
 
     if (res.ok) {
-      getUserBooks();
+      getUserSavedBooks();
     }
   };
 
@@ -250,7 +293,7 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
         setShowModals,
         addLike,
         addBooks,
-        userBooks,
+        userSavedBooks,
         favorieBooks,
         checkBookData,
         setCheckBookData,
@@ -266,8 +309,13 @@ export default function MainContextProvider({ children }: ContexTypeProps) {
         setBooksPerPage,
         handleReserveBooks,
         reservedBooks,
-        bookSectionData,
-        setBookSectionData,
+        booksLoading,
+        setBooksLoading,
+        getUserSavedBooks,
+        getUserReservedBooks,
+        getUserFavoriteBooks,
+        filteredSectionBooks,
+        setFilteredSectionBooks,
       }}
     >
       {children}

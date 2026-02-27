@@ -8,8 +8,13 @@ import { useEffect, useState } from "react";
 import type { BooksType } from "../types/booksType";
 import { useParams } from "react-router-dom";
 import CheckBook from "../components/CheckBook";
+import { FaFilter } from "react-icons/fa6";
+import type { ShowModalsType } from "../context/MainContext";
+import FilterPanel from "../components/FilterPanel";
 
 function ShowSpecificSection() {
+  const [showFilterPanel, setShowFilterPanel] =
+    useState<ShowModalsType>("disappearModal");
   const [bookSection, setBookSection] = useState<BooksType[]>([]);
   const { sectionType } = useParams();
   const [currentPage, setCurrentPage] = useState(0);
@@ -18,39 +23,44 @@ function ShowSpecificSection() {
   const lastIndex = firstIndex + booksPerPage;
 
   const {
-    bookSectionData,
     setBookId,
     setShowModals,
     showModals,
     search,
     bookId,
+    filteredSectionBooks,
   } = useContextHook();
 
+  const handleShowBooks = filteredSectionBooks?.length
+    ? filteredSectionBooks
+    : bookSection;
+
   const handleGetSectionBook = async () => {
+    const API_URLs: Record<string, string> = {
+      recommended_books: "/books/search",
+      mostLiked_books: "/books/get/mostLiked",
+      favorite_books: "/user/books/get/liked",
+      reserved_books: "/user/books/get/reserved",
+      saved_books: "/user/books/get",
+    };
+
     const params = new URLSearchParams();
     params.set("search", search);
 
-    const URL =
-      sectionType === "recommendedBooks"
-        ? "/books/search"
-        : sectionType === "mostLikedBooks"
-          ? "/books/get/mostLiked"
-          : sectionType === "favoriteBooks"
-            ? "/user/books/get/liked"
-            : sectionType === "reservedBooks"
-              ? "/user/books/get/reserved"
-              : "/user/books/get";
+    if (sectionType) {
+      const URL = API_URLs[sectionType];
 
-    const res = await fetch(
-      `http://localhost:3000${URL}?${params.toString()}`,
-      {
-        credentials: "include",
-      },
-    );
+      const res = await fetch(
+        `http://localhost:3000${URL}?${params.toString()}`,
+        {
+          credentials: "include",
+        },
+      );
 
-    if (res.ok) {
-      const data = await res.json();
-      setBookSection(data);
+      if (res.ok) {
+        const data = await res.json();
+        setBookSection(data);
+      }
     }
   };
 
@@ -71,56 +81,79 @@ function ShowSpecificSection() {
         <div className="px-12 py-6 bg-gray-100">
           <section className="px-8 h-fit bg-white rounded-xl flex flex-col gap-6 py-4">
             <header className="flex items-center justify-between">
-              <h1 className="font-medium text-xl flex items-center gap-3">
-                {bookSectionData.title}{" "}
-                {bookSectionData.icon && <bookSectionData.icon />}
+              <h1 className="font-medium text-xl flex items-center gap-3 capitalize">
+                {sectionType?.replace("_", " ")}{" "}
               </h1>
+              <div className="relative">
+                <button
+                  onClick={() =>
+                    showFilterPanel === "showModal"
+                      ? setShowFilterPanel("hideModal")
+                      : setShowFilterPanel("showModal")
+                  }
+                  className="cursor-pointer hover:bg-gray-200 duration-200 flex items-center gap-2 font-medium text-gray-600 px-3 h-8.25 bg-gray-100 rounded-md"
+                >
+                  <FaFilter /> <p className="text-sm">Filter</p>
+                </button>
+                {showFilterPanel !== "disappearModal" && (
+                  <FilterPanel
+                    filterPanelClass={showFilterPanel}
+                    setFilterPanelClaas={setShowFilterPanel}
+                  />
+                )}
+              </div>
             </header>
             <div className="grid grid-cols-5 gap-y-6 gap-x-8">
-              {bookSection.length > 0 && (
+              {handleShowBooks.length > 0 && (
                 <>
-                  {bookSection?.slice(firstIndex, lastIndex).map((book) => {
-                    return (
-                      <article
-                        key={book.id}
-                        onClick={() => {
-                          setBookId(book.id);
-                          setShowModals({
-                            ...showModals,
-                            checkBookModal: "showModal",
-                          });
-                        }}
-                        className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
-                      >
-                        <img
-                          className="w-full rounded"
-                          src={`http://localhost:3000/uploads/${book?.cover}`}
-                        />
-                        <div className="flex flex-col gap-1">
-                          <h2 className="font-medium overflow-hidden text-nowrap text-[14px] text-ellipsis">
-                            {book?.title}
-                          </h2>
-                          <h3 className="text-gray-600 text-[13px]">
-                            {book?.author}
-                          </h3>
-                        </div>
-                      </article>
-                    );
-                  })}
+                  {(filteredSectionBooks.length > 0
+                    ? filteredSectionBooks
+                    : bookSection
+                  )
+                    ?.slice(firstIndex, lastIndex)
+                    .map((book) => {
+                      return (
+                        <article
+                          key={book.id}
+                          onClick={() => {
+                            setBookId(book.id);
+                            setShowModals({
+                              ...showModals,
+                              checkBookModal: "showModal",
+                            });
+                          }}
+                          className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
+                        >
+                          <img
+                            className="w-full rounded"
+                            src={`http://localhost:3000/uploads/${book?.cover}`}
+                          />
+                          <div className="flex flex-col gap-1">
+                            <h2 className="font-medium overflow-hidden text-nowrap text-[14px] text-ellipsis">
+                              {book?.title}
+                            </h2>
+                            <h3 className="text-gray-600 text-[13px]">
+                              {book?.author}
+                            </h3>
+                          </div>
+                        </article>
+                      );
+                    })}
                 </>
               )}
             </div>
 
-            {bookSection.length <= 0 && (
+            {handleShowBooks.length <= 0 && (
               <EmptySection message="No books to show." />
             )}
 
             <Pagination
+              currentPage={currentPage}
               setCurrentPage={setCurrentPage}
               firstIndex={firstIndex}
               lastIndex={lastIndex}
               booksPerPage={booksPerPage}
-              booksLength={bookSection}
+              booksLength={handleShowBooks}
             />
           </section>
         </div>

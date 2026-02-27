@@ -48,7 +48,7 @@ function Login() {
         <p className="text-red-500">{errors.email?.message}</p>
         <input
           placeholder="Password"
-          type="text"
+          type="password"
           {...register("password", { required: "Password is required" })}
         />
         <p className="text-red-500">{errors.password?.message}</p>

@@ -157,7 +157,7 @@ export function AdminPanel() {
               </select>
             </header>
 
-            <div className="flex gap-8 items-center px-4 py-4 bg-white shadow h-fit w-full justify-center rounded-xl">
+            <div className="flex gap-12 items-center px-4 py-4 bg-white shadow h-fit w-full justify-center rounded-xl">
               {handlePanel()}
               <section className="flex flex-col gap-4 w-58">
                 <header className="text-lg font-medium flex items-center gap-2">

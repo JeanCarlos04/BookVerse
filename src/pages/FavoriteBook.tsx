@@ -7,8 +7,14 @@ import useContextHook from "../hooks/useContextHook";
 import { FaRegHeart } from "react-icons/fa6";
 
 function FavoriteBooks() {
-  const { bookId, showModals, setBooksPerPage, booksPerPage, favorieBooks } =
-    useContextHook();
+  const {
+    bookId,
+    showModals,
+    setBooksPerPage,
+    booksPerPage,
+    favorieBooks,
+    booksLoading,
+  } = useContextHook();
 
   return (
     <main className="flex w-full h-full">
@@ -17,12 +23,19 @@ function FavoriteBooks() {
         <Nav />
 
         <BookSection
-          sectionType="favoriteBooks"
+          booksLoading={booksLoading.userFavoriteBooks}
+          sectionType="favorite_books"
           booksPerPage={booksPerPage.favoriteBooksPerPage}
           books={favorieBooks}
           iconColor="#f22b2b"
           TitleIcon={FaRegHeart}
           title="Favorite books"
+          onShowLess={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              favoriteBooksPerPage: 10,
+            })
+          }
           onShowMore={() =>
             setBooksPerPage({
               ...booksPerPage,

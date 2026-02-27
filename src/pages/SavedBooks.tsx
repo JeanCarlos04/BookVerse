@@ -13,7 +13,8 @@ function SavedBooks() {
     booksPerPage,
     setBooksPerPage,
     reservedBooks,
-    userBooks,
+    userSavedBooks,
+    booksLoading,
   } = useContextHook();
 
   return (
@@ -23,12 +24,19 @@ function SavedBooks() {
         <Nav />
 
         <BookSection
-          sectionType="reservedBooks"
+          booksLoading={booksLoading.userReservedBooks}
+          sectionType="reserved_books"
           booksPerPage={booksPerPage.reservedBooksPerPage}
           books={reservedBooks}
           iconColor="#51A2FF"
           TitleIcon={FaRegCalendarCheck}
           title="Reserved books"
+          onShowLess={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              reservedBooksPerPage: 10,
+            })
+          }
           onShowMore={() =>
             setBooksPerPage({
               ...booksPerPage,
@@ -44,12 +52,19 @@ function SavedBooks() {
         />
 
         <BookSection
-          sectionType="savedBooks"
+          booksLoading={booksLoading.userSavedBooks}
+          sectionType="saved_books"
           booksPerPage={booksPerPage.savedBooksPerPage}
-          books={userBooks}
+          books={userSavedBooks}
           iconColor="#feb302"
           TitleIcon={FaBookBookmark}
           title="Saved books"
+          onShowLess={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              savedBooksPerPage: 10,
+            })
+          }
           onShowMore={() =>
             setBooksPerPage({
               ...booksPerPage,
@@ -59,7 +74,7 @@ function SavedBooks() {
           children={
             <ShowingBooks
               booksPerPage={booksPerPage.savedBooksPerPage}
-              bookData={userBooks}
+              bookData={userSavedBooks}
             />
           }
         />

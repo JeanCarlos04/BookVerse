@@ -53,3 +53,33 @@
 .showModal.notificationModal {
   animation: slideLeft 0.4s both ease-in-out;
 }
+
+.showFilterPanel {
+  animation: scaleUp both ease-in-out 0.2s;
+}
+
+.hideFilterPanel {
+  animation: scaleDown both ease-in-out 0.2s;
+}
+
+@keyframes scaleUp {
+  0% {
+    scale: 0.5;
+    opacity: 0%;
+  }
+  100% {
+    scale: 1;
+    opacity: 100%;
+  }
+}
+
+@keyframes scaleDown {
+  0% {
+    scale: 1;
+    opacity: 100%;
+  }
+  100% {
+    scale: 0.5;
+    opacity: 0%;
+  }
+}

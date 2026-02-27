@@ -6,6 +6,7 @@ import useContextHook from "./hooks/useContextHook";
 
 import "./styles/modalsAnimations.css";
 import "./styles/toastAnimation.css";
+import "./styles/SkeletonsAnimation.css";
 
 // PAGES
 
@@ -17,6 +18,7 @@ const FavoriteBooks = lazy(() => import("./pages/FavoriteBook"));
 const Calender = lazy(() => import("./pages/Calendar"));
 const ShowSpecificSection = lazy(() => import("./pages/ShowSpecificSection"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 // ADMIN PANEL
 
@@ -36,6 +38,7 @@ function App() {
         <Route path="/favoriteBooks" element={<FavoriteBooks />} />
         <Route path="/calendar" element={<Calender />} />
         <Route path="/calendar" element={<Calender />} />
+        <Route path="/settings" element={<Settings />} />
         <Route
           path="/bookSection/:sectionType"
           element={<ShowSpecificSection />}

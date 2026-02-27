@@ -53,7 +53,7 @@ function Notifications() {
             }
           }}
           style={{ top: "var(--nav-height)" }}
-          className={`${showModals.notificationModal} notificationModal p-3 px-4 flex flex-col gap-2 shadow border border-gray-100 bg-white rounded-md fixed right-0`}
+          className={`${showModals.notificationModal} notificationModal p-3 px-4 flex flex-col gap-2 shadow border border-gray-100 bg-white rounded-md absolute right-0`}
         >
           <header className="flex items-center justify-between">
             <h2 className="font-medium text-gray-600">Notifications</h2>
@@ -83,7 +83,7 @@ function Notifications() {
               >
                 <h2 className="font-medium text-sm">{noti.title}</h2>
                 <div className="flex gap-2">
-                  <p className=" text-gray-600 text-sm">{noti.description}</p>
+                  <p className=" text-gray-600 text-sm">{noti.description}.</p>
                   <p className="text-xs flex absolute items-end font-medium top-2 right-2">
                     {new Date(noti.created_at).toLocaleDateString()}
                   </p>
