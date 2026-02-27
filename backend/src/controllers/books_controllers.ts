@@ -62,6 +62,24 @@ export const searchBooks = async (req: Request, res: Response) => {
   }
 };
 
+export const filterBooks = async (req: Request, res: Response) => {
+  const { title, author, categories } = req.body;
+
+  const nullishTitle = title ? title.toString() : null;
+  const nullishAuthor = author ? author.toString() : null;
+  const nullishCategories = categories?.length ? categories : null;
+
+  const filteredBooks = await connection.query(
+    `SELECT * FROM books 
+   WHERE ($1::text IS NULL OR title ILIKE '%' || $1::text || '%')
+   AND ($2::text IS NULL OR author ILIKE '%' || $2::text || '%')
+   AND ($3::text[] IS NULL OR categories && $3::text[])`,
+    [nullishTitle, nullishAuthor, nullishCategories],
+  );
+
+  res.json(filteredBooks.rows);
+};
+
 export const getBook = async (req: Request, res: Response) => {
   const { book_id } = req.params;
 

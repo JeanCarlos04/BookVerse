@@ -23,7 +23,7 @@ function CheckBook({ book_id }: CheckBookProps) {
     showModals,
     addLike,
     addBooks,
-    userBooks,
+    userSavedBooks,
     favorieBooks,
     setCheckBookData,
     checkBookData,
@@ -38,7 +38,6 @@ function CheckBook({ book_id }: CheckBookProps) {
       { credentials: "include", method: "PATCH" },
     );
     if (res.ok) {
-      console.log(book_id);
       setToastType({
         message: "Book returned",
         type: "delete",
@@ -57,7 +56,9 @@ function CheckBook({ book_id }: CheckBookProps) {
 
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const isReserved = reservedBooks.some((book) => book.id === book_id);
-  const allUserBooks: BooksType["id"][] = userBooks?.map((book) => book.id);
+  const allUserBooks: BooksType["id"][] = userSavedBooks?.map(
+    (book) => book.id,
+  );
   const allFavoriteBooks: BooksType["id"][] = favorieBooks?.map(
     (book) => book.id,
   );

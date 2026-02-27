@@ -34,6 +34,8 @@ function Profile() {
 
   useEffect(() => {
     const handleGetBooksBySection = async () => {
+      setBooksSection([]);
+
       const URL: Record<string, string> = {
         reserved: "/user/books/get/reserved",
         liked: "/user/books/get/liked",
@@ -65,7 +67,7 @@ function Profile() {
           </header>
           <div className="flex flex-col gap-2 items-center">
             <img
-              className="size-24 rounded-full"
+              className="size-24 rounded-full border-2 border-gray-200"
               src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
             />
             <p className="text-lg font-medium">@{myProfile?.username}</p>

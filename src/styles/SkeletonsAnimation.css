@@ -1,0 +1,13 @@
+.bookSkeleton {
+  animation: skeletonLoading 0.5s both forwards alternate infinite;
+}
+
+@keyframes skeletonLoading {
+  0% {
+    background-color: #f3f4f6;
+  }
+
+  100% {
+    background-color: #b8b8b8;
+  }
+}

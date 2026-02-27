@@ -1,6 +1,7 @@
 import { FaRegBell, FaMagnifyingGlass } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
 import Notifications from "./Notifications";
+import { Link } from "react-router-dom";
 
 function Nav() {
   const { myProfile, setSearch, setShowModals, showModals, notifications } =
@@ -38,16 +39,18 @@ function Nav() {
           )}
           <FaRegBell className="text-xl" />
         </div>
-        <div className="flex gap-1 rounded items-center cursor-pointer">
-          <img
-            src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
-            className="size-10 min-w-10 min-h-10 rounded-full bg-gray-300"
-          />
+        <Link to={"/profile"}>
+          <div className="flex gap-1 hover:bg-gray-100 rounded-md duration-200 p-2 px-3 items-center cursor-pointer">
+            <img
+              src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
+              className="size-10 min-w-10 min-h-10 rounded-full bg-gray-300 border border-gray-300"
+            />
 
-          <p className="text-sm font-medium text-gray-700">
-            @{myProfile?.username}
-          </p>
-        </div>
+            <p className="text-sm font-medium text-gray-700">
+              @{myProfile?.username}
+            </p>
+          </div>
+        </Link>
         <Notifications />
       </nav>
     </div>

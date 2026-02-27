@@ -9,33 +9,56 @@ import { useEffect } from "react";
 import { useState, useRef } from "react";
 import type { BooksType } from "../types/booksType";
 import ToastModal from "../components/UX/ToastModal";
-import fetchFunction from "../utils/fetchFunction";
+import fetchBooksFunction from "../utils/fetchBooksFunction";
 
 function Home() {
-  const { showModals, bookId, search, setBooksPerPage, booksPerPage } =
-    useContextHook();
+  const {
+    showModals,
+    bookId,
+    search,
+    setBooksPerPage,
+    booksPerPage,
+    setBooksLoading,
+    booksLoading,
+  } = useContextHook();
   const [books, setBooks] = useState<BooksType[]>([]);
   const [mostLikedBooks, setMostLikedBooks] = useState<BooksType[]>([]);
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const searchBooks = async (search: string) => {
-    const params = new URLSearchParams();
-    params.set("search", search);
+    try {
+      setBooksLoading((prev) => ({ ...prev, generalBooks: true }));
+      const params = new URLSearchParams();
+      params.set("search", search);
 
-    const res = await fetch(
-      `http://localhost:3000/books/search?${params.toString()}`,
-      { credentials: "include" },
-    );
+      const res = await fetch(
+        `http://localhost:3000/books/search?${params.toString()}`,
+        { credentials: "include" },
+      );
 
-    if (res.ok) {
-      const data = await res.json();
-      setBooks(data);
+      if (res.ok) {
+        const data = await res.json();
+
+        if (data.length <= 0) {
+          return setBooksLoading((prev) => ({
+            ...prev,
+            generalBooks: "empty",
+          }));
+        }
+        setBooks(data);
+        setBooksLoading((prev) => ({ ...prev, generalBooks: false }));
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const getMostLikedBooks = async () => {
-    const data = await fetchFunction<BooksType[]>(
+    const data = await fetchBooksFunction<BooksType[]>(
       "http://localhost:3000/books/get/mostLiked",
+      setBooksLoading,
+
+      "generalBooks",
     );
 
     setMostLikedBooks(data);
@@ -52,9 +75,14 @@ function Home() {
   useEffect(() => {
     if (timeRef.current) clearTimeout(timeRef.current);
 
-    timeRef.current = setTimeout(() => {
+    if (!search) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       searchBooks(search);
-    }, 500);
+    } else {
+      timeRef.current = setTimeout(() => {
+        searchBooks(search);
+      }, 500);
+    }
 
     return () => {
       clearTimeout(timeRef.current);
@@ -68,12 +96,19 @@ function Home() {
         <Nav />
 
         <BookSection
-          sectionType="recommendedBooks"
+          booksLoading={booksLoading.generalBooks}
+          sectionType="recommended_books"
           booksPerPage={booksPerPage.reccommendedPerPage}
           books={books}
           iconColor="#f22b2b"
           TitleIcon={FaFire}
           title="Recommended"
+          onShowLess={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              reccommendedPerPage: 10,
+            })
+          }
           onShowMore={() =>
             setBooksPerPage({
               ...booksPerPage,
@@ -89,12 +124,19 @@ function Home() {
         />
 
         <BookSection
-          sectionType="mostLikedBooks"
+          booksLoading={booksLoading.generalBooks}
+          sectionType="mostLiked_books"
           booksPerPage={booksPerPage.mostLikedPerPage}
           books={mostLikedBooks}
           iconColor="#f22b2b"
           TitleIcon={FaFire}
           title="Most liked"
+          onShowLess={() =>
+            setBooksPerPage({
+              ...booksPerPage,
+              mostLikedPerPage: 10,
+            })
+          }
           onShowMore={() =>
             setBooksPerPage({
               ...booksPerPage,

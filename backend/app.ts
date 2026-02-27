@@ -6,6 +6,7 @@ import cookieP from "cookie-parser";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import disable_reserved_books from "./src/jobs/disable_reserved_book.ts";
+import book_about_to_expire from "./src/jobs/book_about_to_expire.ts";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(router);
 app.use("/uploads", express.static(path.join(__dirName, "uploads")));
 
 disable_reserved_books();
+book_about_to_expire();
 
 app.listen(process.env.PORT, () => {
   console.log("🟢 Listening in port: " + process.env.PORT);

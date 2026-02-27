@@ -5,7 +5,8 @@ import {
   login,
   getUser,
   logout,
-  uploadAvatar,
+  updateProfile,
+  changePassword,
 } from "../controllers/user_controllers.ts";
 import { authToken } from "../middlewares/authToken.ts";
 import {
@@ -16,6 +17,7 @@ import {
   searchBooks,
   getMostLikedBooks,
   getBookByTitle,
+  filterBooks,
 } from "../controllers/books_controllers.ts";
 import {
   addBooks,
@@ -42,6 +44,7 @@ router.post("/user/register", register);
 router.post("/user/login", login);
 router.post("/user/logout", authToken, logout);
 router.get("/user/get", authToken, getUser);
+router.patch("/user/change/password", authToken, changePassword);
 
 // BOOKS APIs
 
@@ -49,6 +52,7 @@ router.get("/books/search", authToken, searchBooks);
 router.get("/books/get/mostLiked", authToken, getMostLikedBooks);
 router.get("/books/get/:book_id", authToken, getBook);
 router.get("/books/getByTitle", authToken, getBookByTitle);
+router.post("/books/filteredBooks", authToken, filterBooks);
 
 // USER BOOKS APIs
 
@@ -91,11 +95,11 @@ router.delete("/books/delete/:book_id", authToken, authAdmin, deleteBooks);
 
 // MULTER APIs
 
-router.post(
-  "/user/avatar",
+router.patch(
+  "/user/update/profile",
   authToken,
   handleImg.single("avatar"),
-  uploadAvatar,
+  updateProfile,
 );
 
 export default router;
