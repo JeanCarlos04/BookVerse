@@ -42,13 +42,12 @@ function FavoriteBooks() {
               favoriteBooksPerPage: booksPerPage.favoriteBooksPerPage + 10,
             })
           }
-          children={
-            <ShowingBooks
-              booksPerPage={booksPerPage.favoriteBooksPerPage}
-              bookData={favorieBooks}
-            />
-          }
-        />
+        >
+          <ShowingBooks
+            booksPerPage={booksPerPage.favoriteBooksPerPage}
+            bookData={favorieBooks}
+          />
+        </BookSection>
 
         {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
       </div>

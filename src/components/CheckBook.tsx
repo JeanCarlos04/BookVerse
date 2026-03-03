@@ -1,5 +1,4 @@
 import {
-  FaBookBookmark,
   FaArrowRightLong,
   FaRegHeart,
   FaRegBookmark,
@@ -12,6 +11,7 @@ import type { BooksType } from "../types/booksType";
 import ToastModal from "./UX/ToastModal";
 import fetchFunction from "../utils/fetchFunction";
 import ConfirmDelete from "./UX/ConfirmDelete";
+import BookSpecs from "./UX/BookSpecs";
 
 type CheckBookProps = {
   book_id: BooksType["id"];
@@ -131,53 +131,13 @@ function CheckBook({ book_id }: CheckBookProps) {
             )}
           </button>
 
-          <section className="w-full h-full flex flex-col justify-center items-center gap-4">
-            <img
-              className="w-50 rounded"
-              src={`http://localhost:3000/uploads/${checkBookData?.cover}`}
-            />
-            <div className="flex flex-col gap-4 w-fit">
-              <div className="flex flex-col gap-1">
-                <p className="font-medium text-lg text-white text-center">
-                  {checkBookData?.title}
-                </p>
-                <h2 className="text-center text-sm text-yellow-400">
-                  {checkBookData?.author}
-                </h2>
-              </div>
-              <div className="flex justify-center items-center gap-4 text-sm font-medium">
-                <div className="flex gap-1 text-center text-gray-300">
-                  <h3>{checkBookData?.likes}</h3>
-                  <label>Likes</label>
-                </div>
-
-                <div className="flex gap-1 text-center text-gray-300">
-                  <h3>{checkBookData?.pages}</h3>
-                  <label>Pages</label>
-                </div>
-              </div>
-              <p className="text-gray-300 text-sm text-center">
-                {checkBookData?.sinopsis}
-              </p>
-            </div>
-
-            <button
-              onClick={() => {
-                if (isReserved) {
-                  setShowConfirmModal(true);
-                  return null;
-                } else {
-                  handleReserveBooks(
-                    book_id,
-                    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                  );
-                }
-              }}
-              className={`${isReserved ? "bg-green-500 hover:bg-green-600 text-white" : "bg-[#ffffff] hover:bg-gray-100"}  duration-150 font-medium w-full  flex items-center gap-2 justify-center text-black py-1 rounded-md cursor-pointer`}
-            >
-              <FaBookBookmark /> {isReserved ? "Reserved" : "Reserve"}
-            </button>
-          </section>
+          <BookSpecs
+            isReserved={isReserved}
+            book_id={book_id}
+            checkBookData={checkBookData}
+            setShowConfirmModal={setShowConfirmModal}
+            handleReserveBooks={handleReserveBooks}
+          />
         </aside>
       )}
       <ConfirmDelete

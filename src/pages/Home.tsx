@@ -115,13 +115,12 @@ function Home() {
               reccommendedPerPage: booksPerPage.reccommendedPerPage + 10,
             })
           }
-          children={
-            <ShowingBooks
-              booksPerPage={booksPerPage.reccommendedPerPage}
-              bookData={books}
-            />
-          }
-        />
+        >
+          <ShowingBooks
+            booksPerPage={booksPerPage.reccommendedPerPage}
+            bookData={books}
+          />
+        </BookSection>
 
         <BookSection
           booksLoading={booksLoading.generalBooks}
@@ -143,13 +142,13 @@ function Home() {
               mostLikedPerPage: booksPerPage.mostLikedPerPage + 10,
             })
           }
-          children={
-            <ShowingBooks
-              booksPerPage={booksPerPage.reccommendedPerPage}
-              bookData={mostLikedBooks}
-            />
-          }
-        />
+        >
+          {" "}
+          <ShowingBooks
+            booksPerPage={booksPerPage.reccommendedPerPage}
+            bookData={mostLikedBooks}
+          />
+        </BookSection>
 
         {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
       </div>

@@ -69,25 +69,26 @@ function HistoryProfileSection({
         <div className="bg-gray-50 py-5">
           {dates.map((date) => {
             return (
-              <>
+              <div key={date}>
                 <p className="text-lg text-center font-medium ">{date}</p>
                 <div className="w-full h-full py-5 gap-y-5 px-8 grid grid-cols-4 bg-gray-50 relative">
                   {(historySection === "all"
                     ? booksSection
                     : booksFiltered
                   ).map((book) => {
-                    {
-                      if (
-                        new Date(book.created_at)
-                          .toLocaleDateString()
-                          .toString() !== date
-                      )
-                        return;
-                    }
+                    if (
+                      new Date(book.created_at)
+                        .toLocaleDateString()
+                        .toString() !== date
+                    )
+                      return;
+
                     return (
-                      <div className="flex flex-col gap-2 items-center">
+                      <div
+                        key={book.id}
+                        className="flex flex-col gap-2 items-center"
+                      >
                         <article
-                          key={book.id}
                           onClick={() => {
                             setBookId(book.id);
                             setShowModals({
@@ -98,6 +99,7 @@ function HistoryProfileSection({
                           className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
                         >
                           <img
+                            alt={`${book.cover} image`}
                             className="w-full rounded"
                             src={`http://localhost:3000/uploads/${book?.cover}`}
                           />
@@ -114,7 +116,7 @@ function HistoryProfileSection({
                     );
                   })}
                 </div>
-              </>
+              </div>
             );
           })}
         </div>

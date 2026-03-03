@@ -103,7 +103,7 @@ function FilterPanel({
         <div className="flex gap-1 flex-col">
           <h2 className="text font-medium text-gray-800">Categories</h2>
 
-          <div className="grid grid-cols-3  gap-y-5">
+          <div className="grid grid-cols-3 gap-y-5">
             {Object.keys(genres).map((genre) => {
               return (
                 <div key={genre} className="flex items-center gap-2">
@@ -124,6 +124,7 @@ function FilterPanel({
                     className="hidden peer"
                   />
                   <label
+                    aria-label="Select book categorie"
                     htmlFor={`categorie${genre}`}
                     className="peer-checked:bg-green-400 peer-checked:border-green-500 rounded-xs border border-gray-400 shadow min-w-3 min-h-3 size-3"
                   ></label>

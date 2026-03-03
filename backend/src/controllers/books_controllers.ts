@@ -2,15 +2,19 @@ import connection from "../connection/pg_connection.ts";
 import type { Response, Request } from "./user_controllers.ts";
 
 export const createBooks = async (req: Request, res: Response) => {
-  const { title, sinopsis, author } = req.body;
+  const { title, sinopsis, author, pages, categories } = req.body;
   const cover = req.file;
+
+  const parsedPages = JSON.parse(pages);
+  const pagesIntoNumber = Number(parsedPages);
+  const parsedCategories = JSON.parse(categories);
 
   if (!cover) return res.status(400).json({ error: "Image is required" });
   const coverName = cover.originalname;
 
   const created_book = await connection.query(
-    "INSERT INTO books (title, sinopsis, cover, author) VALUES ($1,$2,$3,$4) RETURNING *",
-    [title, sinopsis, coverName, author],
+    "INSERT INTO books (title, sinopsis, cover, author, pages, categories) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
+    [title, sinopsis, coverName, author, pagesIntoNumber, parsedCategories],
   );
 
   res.json(created_book.rows[0]);
@@ -19,18 +23,24 @@ export const createBooks = async (req: Request, res: Response) => {
 export const updateBooks = async (req: Request, res: Response) => {
   const cover = req.file?.filename;
   const { book_id } = req.params;
-  const { title, sinopsis } = req.body;
+  const { title, sinopsis, pages, categories } = req.body;
+
+  const parsedPages = JSON.parse(pages);
+  const pagesIntoNumber = Number(parsedPages);
+  const parsedCategories = JSON.parse(categories);
 
   const updated_book = await connection.query(
     `
       UPDATE books SET 
           title = COALESCE($1, title),
           sinopsis = COALESCE($2, sinopsis),
-          cover = COALESCE($3, cover)
-        WHERE id = $4
+          cover = COALESCE($3, cover),
+          pages = COALESCE($4, pages),
+          categories = COALESCE($5, categories)
+        WHERE id = $6
         RETURNING *
         `,
-    [title, sinopsis, cover, book_id],
+    [title, sinopsis, cover, pagesIntoNumber, parsedCategories, book_id],
   );
 
   res.json(updated_book.rows[0]);

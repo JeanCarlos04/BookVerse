@@ -7,10 +7,10 @@ import useContextHook from "../hooks/useContextHook";
 function Calendar() {
   const { reservedBooks } = useContextHook();
   const [formatedDay, setFormatedDays] = useState<(number | null)[][]>([]);
-  const [month, setMonth] = useState(new Date().getMonth());
-  const [monthDay, setMonthDay] = useState(new Date().getDate());
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [weekDay, setWeekDay] = useState(new Date(year, month).getDay());
+  const [month, setMonth] = useState(() => new Date().getMonth());
+  const [monthDay, setMonthDay] = useState(() => new Date().getDate());
+  const [year, setYear] = useState(() => new Date().getFullYear());
+  const [weekDay, setWeekDay] = useState(() => new Date(year, month).getDay());
 
   const calendar = [
     { month: "january", days: 31 },
@@ -116,14 +116,14 @@ function Calendar() {
                     </tr>
                   </thead>
                   <tbody>
-                    {formatedDay.map((row, index) => {
+                    {formatedDay.map((row) => {
                       return (
-                        <tr key={index}>
-                          {row.map((column, index) => {
+                        <tr key={Number(row)}>
+                          {row.map((column) => {
                             return (
                               <td
-                                key={index}
-                                className={`${monthDay === column ? "border-blue-300 border-2" : "border-gray-200 border"}  h-25 pt-2 pb-8 px-2 font-medium text-xs rounded-md relative`}
+                                key={column}
+                                className={`${monthDay === column && month === new Date().getMonth() ? "border-blue-300 border-2" : "border-gray-200 border"}  h-25 pt-2 pb-8 px-2 font-medium text-xs rounded-md relative`}
                               >
                                 {(() => {
                                   const booksThatDay = reservedBooks.filter(
@@ -147,7 +147,7 @@ function Calendar() {
                                       </h3>
 
                                       {booksThatDay.map((book) => (
-                                        <p key={book.id}>- {book.title}</p>
+                                        <p key={book.id}> - {book.title}</p>
                                       ))}
                                     </div>
                                   );

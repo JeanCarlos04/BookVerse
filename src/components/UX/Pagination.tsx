@@ -25,17 +25,17 @@ function Pagination({
         <section className=" flex gap-3 w-full justify-center items-center">
           <button
             onClick={() =>
-              currentPage > 0 ? setCurrentPage(currentPage - 1) : null
+              currentPage > 0 ? setCurrentPage((prev) => prev - 1) : null
             }
             className="cursor-pointer hover:text-gray-700"
           >
             <FaAngleLeft />
           </button>
-          {buttons.map((_, index) => {
+          {buttons.map((buttonsLength, index) => {
             return (
               <div
+                key={Number(buttonsLength)}
                 onClick={() => setCurrentPage(index)}
-                key={index}
                 className={`cursor-pointer flex min-h-8 w-8 items-center justify-center h-fit rounded-md font-medium  ${currentPage === index ? "bg-blue-500 text-white" : "bg-white text-gray-600 border border-gray-300 shadow-sm"} `}
               >
                 {index + 1}
@@ -45,7 +45,7 @@ function Pagination({
           <button
             onClick={() =>
               currentPage < buttons.length - 1
-                ? setCurrentPage(currentPage + 1)
+                ? setCurrentPage((prev) => prev + 1)
                 : null
             }
             className="cursor-pointer hover:text-gray-700"
