@@ -43,13 +43,12 @@ function SavedBooks() {
               reservedBooksPerPage: booksPerPage.reservedBooksPerPage + 10,
             })
           }
-          children={
-            <ShowingBooks
-              booksPerPage={booksPerPage.reservedBooksPerPage}
-              bookData={reservedBooks}
-            />
-          }
-        />
+        >
+          <ShowingBooks
+            booksPerPage={booksPerPage.reservedBooksPerPage}
+            bookData={reservedBooks}
+          />
+        </BookSection>
 
         <BookSection
           booksLoading={booksLoading.userSavedBooks}
@@ -71,13 +70,13 @@ function SavedBooks() {
               savedBooksPerPage: booksPerPage.savedBooksPerPage + 10,
             })
           }
-          children={
-            <ShowingBooks
-              booksPerPage={booksPerPage.savedBooksPerPage}
-              bookData={userSavedBooks}
-            />
-          }
-        />
+        >
+          {" "}
+          <ShowingBooks
+            booksPerPage={booksPerPage.savedBooksPerPage}
+            bookData={userSavedBooks}
+          />
+        </BookSection>
       </div>
       {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>

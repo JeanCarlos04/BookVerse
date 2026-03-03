@@ -54,8 +54,12 @@ function BookSection({
 
         {booksLoading === true ? (
           <div className="grid grid-cols-5 gap-y-6 gap-x-8 w-full h-full">
-            {Array.from({ length: 5 }).map(() => {
-              return <BookSkeleton />;
+            {Array.from({ length: 5 }).map((position) => {
+              return (
+                <div key={Number(position)}>
+                  <BookSkeleton />
+                </div>
+              );
             })}
           </div>
         ) : (

@@ -26,6 +26,7 @@ function ShowingBooks({ bookData, booksPerPage }: ShowingBooksProps) {
                 className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
               >
                 <img
+                  alt={`${book.cover} image`}
                   className="w-full rounded"
                   src={`http://localhost:3000/uploads/${book?.cover}`}
                 />

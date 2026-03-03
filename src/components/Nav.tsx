@@ -42,6 +42,7 @@ function Nav() {
         <Link to={"/profile"}>
           <div className="flex gap-1 hover:bg-gray-100 rounded-md duration-200 p-2 px-3 items-center cursor-pointer">
             <img
+              alt="My profile avatar"
               src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
               className="size-10 min-w-10 min-h-10 rounded-full bg-gray-300 border border-gray-300"
             />

@@ -61,6 +61,7 @@ function UpdateProfile() {
             New avatar <FaCamera />
           </p>
           <label
+            aria-label="Update your avatar"
             onMouseEnter={() => setHoverImageIcon(true)}
             onMouseLeave={() => setHoverImageIcon(false)}
             htmlFor="avatar_url_input"
@@ -74,6 +75,7 @@ function UpdateProfile() {
               <FaRegImage className="text-white text-2xl" />
             </div>
             <img
+              alt="My profile avatar"
               className="size-24 rounded-full"
               src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
             />
