@@ -1,9 +1,10 @@
-import { FaRegImage, FaBook } from "react-icons/fa6";
+import { FaRegImage, FaBook, FaTags } from "react-icons/fa6";
 import type { UseFormRegister } from "react-hook-form";
 import type { SelectPanel } from "../pages/AdminPanel";
 import type { FieldErrors } from "react-hook-form";
 import type { FormType } from "../pages/AdminPanel";
 import { useState } from "react";
+import categories from "../constant/BookCategories";
 
 type CreateBookPanelProps = {
   register: UseFormRegister<FormType>;
@@ -26,33 +27,17 @@ function CreateBookPanel({
   setCategoriesApplied,
   categoriesApplied,
 }: CreateBookPanelProps) {
-  const [genres, setGenres] = useState<Record<string, boolean>>({
-    Fantasy: false,
-    "Science Fiction": false,
-    Mystery: false,
-    Romance: false,
-    Horror: false,
-    Adventure: false,
-    Dystopian: false,
-    "Self-help": false,
-    Programming: false,
-    Technology: false,
-    History: false,
-    Biography: false,
-    Finance: false,
-    Psychology: false,
-    Business: false,
-  });
+  const [genres, setGenres] = useState<Record<string, boolean>>(categories);
 
   return (
-    <section className=" flex flex-col gap-4">
+    <section className="flex flex-col gap-4">
       <header>
         <h3 className="flex gap-2 items-center text-lg font-medium">
           {selectPanelFunction === "create" ? "Create books" : "Edit books"}{" "}
           <FaBook className="text-gray-600" />
         </h3>
       </header>
-      <form onSubmit={handleCreateBook} className="flex flex-col gap-4 w-100">
+      <form onSubmit={handleCreateBook} className="flex flex-col gap-4 w-full">
         {selectPanelFunction === "edit" && (
           <input
             onChange={(e) => setSearchInputBook(e.target.value)}
@@ -87,61 +72,68 @@ function CreateBookPanel({
           </p>
         )}
 
-        <input
-          placeholder="Author"
-          {...register("author", {
-            required: "Author field is required",
-          })}
-          className="border border-gray-200 shadow h-7.5 rounded-md pl-3 text-sm outline-blue-400"
-        />
-        {errors.author && (
-          <p className="text-red-400 font-medium text-sm">
-            {errors.author?.message}
-          </p>
-        )}
+        <div className="flex items-center justify-between gap-3">
+          <input
+            placeholder="Author"
+            {...register("author", {
+              required: "Author field is required",
+            })}
+            className="border w-full border-gray-200 shadow h-7.5 rounded-md pl-3 text-sm outline-blue-400"
+          />
+          {errors.author && (
+            <p className="text-red-400 font-medium text-sm">
+              {errors.author?.message}
+            </p>
+          )}
 
-        <input
-          placeholder="Pages"
-          {...register("pages", {
-            required: "Pages field is required",
-          })}
-          className="border border-gray-200 shadow h-7.5 rounded-md pl-3 text-sm outline-blue-400"
-        />
-        {errors.author && (
-          <p className="text-red-400 font-medium text-sm">
-            {errors.pages?.message}
-          </p>
-        )}
+          <input
+            placeholder="Pages"
+            {...register("pages", {
+              required: "Pages field is required",
+            })}
+            className="border border-gray-200 shadow h-7.5 rounded-md pl-3 text-sm outline-blue-400"
+          />
+          {errors.author && (
+            <p className="text-red-400 font-medium text-sm">
+              {errors.pages?.message}
+            </p>
+          )}
+        </div>
 
-        <div className="grid grid-cols-3 gap-y-5">
-          {Object.keys(genres).map((genre) => {
-            return (
-              <div key={genre} className="flex items-center gap-2">
-                <input
-                  checked={genres[genre]}
-                  onChange={() => {
-                    setGenres((prev) => ({ ...prev, [genre]: !prev[genre] }));
-                    if (categoriesApplied.includes(genre)) {
-                      setCategoriesApplied((prev) =>
-                        prev.filter((categorie) => categorie !== genre),
-                      );
-                    } else {
-                      setCategoriesApplied((prev) => [...prev, genre]);
-                    }
-                  }}
-                  id={`categorie${genre}`}
-                  type="checkbox"
-                  className="hidden peer"
-                />
-                <label
-                  aria-label="Select book categorie"
-                  htmlFor={`categorie${genre}`}
-                  className="peer-checked:bg-green-400 peer-checked:border-green-500 rounded-xs border border-gray-400 shadow min-w-3 min-h-3 size-3"
-                />
-                <p className="text-sm">{genre}</p>
-              </div>
-            );
-          })}
+        <div className="flex flex-col gap-4 text-gray-800">
+          <h2 className="font-medium flex items-center gap-2">
+            Categories <FaTags className="text-gray-600" />
+          </h2>
+          <div className="grid grid-cols-3 gap-y-5">
+            {Object.keys(genres).map((genre) => {
+              return (
+                <div key={genre} className="flex items-center gap-2">
+                  <input
+                    checked={genres[genre]}
+                    onChange={() => {
+                      setGenres((prev) => ({ ...prev, [genre]: !prev[genre] }));
+                      if (categoriesApplied.includes(genre)) {
+                        setCategoriesApplied((prev) =>
+                          prev.filter((categorie) => categorie !== genre),
+                        );
+                      } else {
+                        setCategoriesApplied((prev) => [...prev, genre]);
+                      }
+                    }}
+                    id={`categorie${genre}`}
+                    type="checkbox"
+                    className="hidden peer"
+                  />
+                  <label
+                    aria-label="Select book categorie"
+                    htmlFor={`categorie${genre}`}
+                    className="peer-checked:bg-green-400 peer-checked:border-green-500 rounded-xs border border-gray-400 shadow min-w-3 min-h-3 size-3"
+                  />
+                  <p className="text-sm">{genre}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <input

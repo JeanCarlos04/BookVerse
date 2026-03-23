@@ -34,7 +34,7 @@ function HistoryProfileSection({
 
   return (
     <div className="flex gap-4 flex-col w-full">
-      <div className="flex gap-10 justify-center text-gray-700">
+      <div className="md:flex grid grid-cols-2 gap-2 xl:gap-10 md:gap-6 py-2 justify-center text-gray-700">
         <button
           onClick={() => setHistorySection("all")}
           className={`font-medium px-4 py-1 ${historySection === "all" ? "bg-blue-400 text-white" : "bg-gray-200 text-gray-700"} bg-border border-gray-300 shadow rounded cursor-pointer`}
@@ -71,7 +71,7 @@ function HistoryProfileSection({
             return (
               <div key={date}>
                 <p className="text-lg text-center font-medium ">{date}</p>
-                <div className="w-full h-full py-5 gap-y-5 px-8 grid grid-cols-4 bg-gray-50 relative">
+                <div className="w-full h-full py-5 gap-y-5 xl:px-8 px-4 grid xl:grid-cols-4 md:grid-cols-3 grid-cols-2 bg-gray-50 relative">
                   {(historySection === "all"
                     ? booksSection
                     : booksFiltered
@@ -96,7 +96,7 @@ function HistoryProfileSection({
                               checkBookModal: "showModal",
                             });
                           }}
-                          className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
+                          className="group flex flex-col shadow w-38 md:w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
                         >
                           <img
                             alt={`${book.cover} image`}

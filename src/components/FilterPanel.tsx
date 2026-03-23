@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import type { ShowModalsType } from "../context/MainContext";
-import useContextHook from "../hooks/useContextHook";
-
+import useBookContext from "../hooks/useBookContext";
+import categories from "../constant/BookCategories";
 import { useForm } from "react-hook-form";
 
 type FilterPanelProps = {
@@ -20,26 +20,10 @@ function FilterPanel({
   filterPanelClass,
   setFilterPanelClaas,
 }: FilterPanelProps) {
-  const { setFilteredSectionBooks } = useContextHook();
+  const { setFilteredSectionBooks } = useBookContext();
   const { register, handleSubmit, reset } = useForm<FormType>();
   const [categoriesApplied, setCategoriesApplied] = useState<string[]>([]);
-  const [genres, setGenres] = useState<Record<string, boolean>>({
-    Fantasy: false,
-    "Science Fiction": false,
-    Mystery: false,
-    Romance: false,
-    Horror: false,
-    Adventure: false,
-    Dystopian: false,
-    "Self-help": false,
-    Programming: false,
-    Technology: false,
-    History: false,
-    Biography: false,
-    Finance: false,
-    Psychology: false,
-    Business: false,
-  });
+  const [genres, setGenres] = useState<Record<string, boolean>>(categories);
 
   const handleApplyFilter = handleSubmit(async (data: FormType) => {
     const { title, author } = data;

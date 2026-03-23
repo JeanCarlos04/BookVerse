@@ -1,34 +1,20 @@
 import { useEffect, useState } from "react";
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
-import ToastModal from "../components/UX/ToastModal";
-import useContextHook from "../hooks/useContextHook";
+import useBookContext from "../hooks/useBookContext";
+import calendarConst from "../constant/Calendar";
+import WidthResponsiveHook from "../hooks/widthHook";
 
 function Calendar() {
-  const { reservedBooks } = useContextHook();
+  const { reservedBooks } = useBookContext();
   const [formatedDay, setFormatedDays] = useState<(number | null)[][]>([]);
   const [month, setMonth] = useState(() => new Date().getMonth());
   const [monthDay, setMonthDay] = useState(() => new Date().getDate());
   const [year, setYear] = useState(() => new Date().getFullYear());
   const [weekDay, setWeekDay] = useState(() => new Date(year, month).getDay());
 
-  const calendar = [
-    { month: "january", days: 31 },
-    { month: "february", days: 28 },
-    { month: "march", days: 31 },
-    { month: "april", days: 30 },
-    { month: "may", days: 31 },
-    { month: "june", days: 30 },
-    { month: "july", days: 31 },
-    { month: "august", days: 31 },
-    { month: "september", days: 30 },
-    { month: "october", days: 31 },
-    { month: "november", days: 30 },
-    { month: "december", days: 31 },
-  ];
+  const width = WidthResponsiveHook();
 
   const handleCalendarControl = () => {
-    const monthData = calendar[month];
+    const monthData = calendarConst[month];
     const formated: (number | null)[][] = [[], [], [], [], [], []];
 
     let day = 0;
@@ -68,116 +54,119 @@ function Calendar() {
   }, [weekDay]);
 
   return (
-    <>
-      <main className="flex w-full h-full">
-        <Aside />
-        <div className="w-full">
-          <Nav />
+    <main className="flex w-full h-full xl:pl-(--aside-width)">
+      <div className="w-full h-full flex bg-gray-50 justify-center pb-4 pt-8">
+        <section className="w-fit md:px-8 p-2  rounded-lg bg-white shadow flex py-6 h-fit items-center flex-col gap-6">
+          <header className="flex xl:border-0 items-center border border-gray-100 gap-4 bg-white shadow p-3 rounded-md">
+            <h2 className="md:text-lg font-medium">
+              {width > 768 ? "My Calendar" : "Calendar"}
+            </h2>
+            <input
+              onChange={(e) => {
+                const splittedDate = new Date(e.target.value)
+                  .toLocaleDateString()
+                  .split("/");
 
-          <div className="w-full h-full flex bg-gray-50 justify-center pb-4 pt-8">
-            <section className="w-fit px-8 rounded-lg bg-white shadow flex py-6 h-fit items-center flex-col gap-6">
-              <header className="flex gap-4 bg-white shadow p-3 rounded-md">
-                <h2 className="text-lg font-medium">My Calendar</h2>
-                <input
-                  onChange={(e) => {
-                    const splittedDate = new Date(e.target.value)
-                      .toLocaleDateString()
-                      .split("/");
+                setMonth(() => Number(splittedDate[1]) - 1);
+                setYear(() => Number(splittedDate[2]));
+                setMonthDay(() => Number(splittedDate[0]) + 1);
 
-                    setMonth(() => Number(splittedDate[1]) - 1);
-                    setYear(() => Number(splittedDate[2]));
-                    setMonthDay(() => Number(splittedDate[0]) + 1);
-
-                    setWeekDay(() =>
-                      new Date(
-                        Number(splittedDate[2]),
-                        Number(splittedDate[1]) - 1,
-                      ).getDay(),
-                    );
-                  }}
-                  className="shadow border border-gray-200 px-3 rounded"
-                  type="date"
-                />
-                <h2 className="text-center capitalize font-medium">
-                  {calendar[month].month} - {monthDay} - {year}
-                </h2>
-              </header>
-              <div className="w-full flex flex-col gap-4 justify-center items-center">
-                <table>
-                  <thead>
-                    <tr className="h-12.5">
-                      <th className="w-30 font-medium">Sunday</th>
-                      <th className="w-30 font-medium">Monday</th>
-                      <th className="w-30 font-medium">Tuesday</th>
-                      <th className="w-30 font-medium">Wednesday</th>
-                      <th className="w-30 font-medium">Thursday</th>
-                      <th className="w-30 font-medium">Friday</th>
-                      <th className="w-30 font-medium">Saturday</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formatedDay.map((row) => {
-                      return (
-                        <tr key={Number(row)}>
-                          {row.map((column) => {
-                            return (
-                              <td
-                                key={column}
-                                className={`${monthDay === column && month === new Date().getMonth() ? "border-blue-300 border-2" : "border-gray-200 border"}  h-25 pt-2 pb-8 px-2 font-medium text-xs rounded-md relative`}
-                              >
-                                {(() => {
-                                  const booksThatDay = reservedBooks.filter(
-                                    (book) => {
-                                      const d = new Date(book.expires_in);
-
-                                      return (
-                                        d.getDate() === column &&
-                                        d.getMonth() === month &&
-                                        d.getFullYear() === year
-                                      );
-                                    },
-                                  );
-
-                                  if (booksThatDay.length === 0) return null;
+                setWeekDay(() =>
+                  new Date(
+                    Number(splittedDate[2]),
+                    Number(splittedDate[1]) - 1,
+                  ).getDay(),
+                );
+              }}
+              className="shadow border border-gray-200 px-3 rounded"
+              type="date"
+            />
+            <h2 className="text-center md:text-base text-sm capitalize font-medium">
+              {calendarConst[month].month} - {monthDay} - {year}
+            </h2>
+          </header>
+          <div className="w-full flex flex-col gap-4 justify-center items-center">
+            <table>
+              <thead>
+                <tr className="h-12.5">
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Sun" : "Sunday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Mon" : "Monday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Tue" : "Tuesday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Wed" : "Wednesday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Thu" : "Thursday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Fri" : "Friday"}{" "}
+                  </th>
+                  <th className="w-30 font-medium">
+                    {width < 1024 ? "Sat" : "Saturday"}{" "}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {formatedDay.map((row) => {
+                  return (
+                    <tr key={Number(row)}>
+                      {row.map((column) => {
+                        return (
+                          <td
+                            key={column}
+                            className={`${monthDay === column && month === new Date().getMonth() ? "border-blue-300 border-2" : "border-gray-200 border"}  h-25 pt-2 pb-8 px-2 font-medium text-xs rounded-md relative`}
+                          >
+                            {(() => {
+                              const booksThatDay = reservedBooks.filter(
+                                (book) => {
+                                  const d = new Date(book.expires_in);
 
                                   return (
-                                    <div className="flex flex-col gap-2">
-                                      <h3 className="text-blue-500">
-                                        Books expired in:
-                                      </h3>
-
-                                      {booksThatDay.map((book) => (
-                                        <p key={book.id}> - {book.title}</p>
-                                      ))}
-                                    </div>
+                                    d.getDate() === column &&
+                                    d.getMonth() === month &&
+                                    d.getFullYear() === year
                                   );
-                                })()}
+                                },
+                              );
 
-                                <h4
-                                  className={` absolute bottom-2 right-2 text-gray-700`}
-                                >
-                                  {column}
-                                </h4>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                              if (booksThatDay.length === 0) return null;
+
+                              return (
+                                <div className="flex flex-col gap-2">
+                                  <h3 className="text-blue-500">
+                                    Books expired in:
+                                  </h3>
+
+                                  {booksThatDay.map((book) => (
+                                    <p key={book.id}> - {book.title}</p>
+                                  ))}
+                                </div>
+                              );
+                            })()}
+
+                            <h4
+                              className={` absolute bottom-2 right-2 text-gray-700`}
+                            >
+                              {column}
+                            </h4>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-
-          {/* {bookId && showModals.checkBookModal && (
-            <CheckBook book_id={bookId} />
-          )} */}
-        </div>
-
-        <ToastModal />
-      </main>
-    </>
+        </section>
+      </div>
+    </main>
   );
 }
 

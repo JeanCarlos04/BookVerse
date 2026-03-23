@@ -1,9 +1,11 @@
-import type { IsSectionEmpty } from "../context/MainContext";
+import type { SectionType } from "../types/sectionType";
 
 async function fetchBooksFunction<T>(
   URL: string,
-  setBooksLoading: React.Dispatch<React.SetStateAction<IsSectionEmpty>>,
-  bookSection: keyof IsSectionEmpty,
+  setBooksLoading: React.Dispatch<
+    React.SetStateAction<Record<SectionType, string | boolean | undefined>>
+  >,
+  bookSection: SectionType,
 ): Promise<T> {
   try {
     setBooksLoading((prev) => ({

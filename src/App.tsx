@@ -1,9 +1,14 @@
 import { Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import useContextHook from "./hooks/useContextHook";
+import Nav from "./components/Nav";
+import Aside from "./components/Aside";
+import ToastModal from "./components/UX/ToastModal";
+import { loginURL, registerURL } from "./constant/URL";
 
 // ANIMATIONS STYLES
 
+import "./styles/asideAnimation.css";
 import "./styles/modalsAnimations.css";
 import "./styles/toastAnimation.css";
 import "./styles/SkeletonsAnimation.css";
@@ -28,26 +33,36 @@ function App() {
   const { myProfile } = useContextHook();
 
   return (
-    <Suspense fallback={<h1>Loading...</h1>}>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/userSavedBooks" element={<SavedBooks />} />
-        <Route path="/favoriteBooks" element={<FavoriteBooks />} />
-        <Route path="/calendar" element={<Calender />} />
-        <Route path="/calendar" element={<Calender />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route
-          path="/bookSection/:sectionType"
-          element={<ShowSpecificSection />}
-        />
-        {myProfile?.role === "ADMIN" ? (
-          <Route path="/adminPanel" element={<AdminPanel />} />
-        ) : null}
-      </Routes>
-    </Suspense>
+    <>
+      {location.pathname !== loginURL && location.pathname !== registerURL && (
+        <>
+          <Nav />
+          <Aside />
+        </>
+      )}
+
+      <Suspense fallback={<h1>Loading...</h1>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path={`${loginURL}`} element={<Login />} />
+          <Route path={`${registerURL}`} element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/userSavedBooks" element={<SavedBooks />} />
+          <Route path="/favoriteBooks" element={<FavoriteBooks />} />
+          <Route path="/calendar" element={<Calender />} />
+          <Route path="/calendar" element={<Calender />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route
+            path="/bookSection/:sectionType"
+            element={<ShowSpecificSection />}
+          />
+          {myProfile?.role === "ADMIN" ? (
+            <Route path="/adminPanel" element={<AdminPanel />} />
+          ) : null}
+        </Routes>
+      </Suspense>
+      <ToastModal />
+    </>
   );
 }
 

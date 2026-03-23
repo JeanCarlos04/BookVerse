@@ -1,8 +1,5 @@
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
 import CheckBook from "../components/CheckBook";
 import useContextHook from "../hooks/useContextHook";
-import ToastModal from "../components/UX/ToastModal";
 import fetchFunction from "../utils/fetchFunction";
 import type {
   BooksType,
@@ -18,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import HistoryProfileSection from "../components/HistoryProfileSection";
 import EmptySection from "../components/UX/EmpySection";
+import type { IconType } from "react-icons";
 
 type SectionSelector = "reserved" | "liked" | "saved" | "history";
 
@@ -53,109 +51,96 @@ function Profile() {
     handleGetBooksBySection();
   }, [selectSection]);
 
+  const profileButtons = (
+    profileSection: SectionSelector,
+    Icon: IconType,
+    title: string,
+  ) => {
+    return (
+      <button
+        onClick={() => setSelectSection(profileSection)}
+        className={`font-medium ${selectSection === `${profileSection}` ? "text-blue-500" : "text-gray-700 hover:text-gray-500"} duration-200 cursor-pointer flex items-center gap-2 whitespace-nowrap`}
+      >
+        <Icon /> {title}
+      </button>
+    );
+  };
+
   return (
-    <main className="flex w-full h-screen">
-      <Aside />
-      <div className="w-full">
-        <Nav />
+    <main className="flex justify-center w-full h-screen xl:pl-(--aside-width)">
+      <section className="xl:p-12 md:px-8 px-4 pt-8 gap-8 flex w-full flex-col items-center">
+        <header>
+          <h1 className="text-2xl font-medium">
+            {myProfile?.username}'s profile
+          </h1>
+        </header>
+        <div className="flex flex-col gap-2 items-center">
+          <img
+            alt="My profile avatar"
+            className="size-24 rounded-full border-2 border-gray-200"
+            src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
+          />
+          <p className="text-lg font-medium">@{myProfile?.username}</p>
+        </div>
 
-        <section className="p-12 pt-8 gap-8 flex flex-col items-center">
-          <header>
-            <h1 className="text-2xl font-medium">
-              {myProfile?.username}'s profile
-            </h1>
-          </header>
-          <div className="flex flex-col gap-2 items-center">
-            <img
-              alt="My profile avatar"
-              className="size-24 rounded-full border-2 border-gray-200"
-              src={`http://localhost:3000/uploads/${myProfile?.avatar_url}`}
-            />
-            <p className="text-lg font-medium">@{myProfile?.username}</p>
+        <div className="flex flex-col gap-3 w-full">
+          <div className="md:flex grid grid-cols-2 rounded-md justify-center content-center place-items-center md:h-10 xl:gap-28 md:gap-16 gap-4 bg-gray-50 w-full h-auto md:py-0 py-2">
+            {profileButtons("reserved", FaBookBookmark, "Reserved books")}
+            {profileButtons("liked", FaRegHeart, "Liked books")}
+            {profileButtons("saved", FaRegCalendarCheck, "Saved Books")}
+            {profileButtons("history", FaRegClock, "Books history")}
           </div>
 
-          <div className="flex flex-col gap-3 w-full">
-            <div className="flex rounded-md justify-center h-10 gap-28 bg-gray-50 w-full">
-              <button
-                onClick={() => setSelectSection("reserved")}
-                className={`font-medium ${selectSection === "reserved" ? "text-blue-500" : "text-gray-700 hover:text-gray-500"} duration-200 cursor-pointer flex items-center gap-2`}
-              >
-                <FaBookBookmark /> Reserved Books
-              </button>
-              <button
-                onClick={() => setSelectSection("liked")}
-                className={`font-medium ${selectSection === "liked" ? "text-blue-500" : "text-gray-700 hover:text-gray-500"} duration-200 cursor-pointer flex items-center gap-2`}
-              >
-                <FaRegHeart />
-                Liked Books
-              </button>
-              <button
-                onClick={() => setSelectSection("saved")}
-                className={`font-medium ${selectSection === "saved" ? "text-blue-500" : "text-gray-700 hover:text-gray-500"} duration-200 cursor-pointer flex items-center gap-2`}
-              >
-                <FaRegCalendarCheck /> Saved Books
-              </button>
-              <button
-                onClick={() => setSelectSection("history")}
-                className={`font-medium ${selectSection === "history" ? "text-blue-500" : "text-gray-700 hover:text-gray-500"} duration-200 cursor-pointer flex items-center gap-2`}
-              >
-                <FaRegClock /> History
-              </button>
+          {booksSection.length > 0 ? (
+            <>
+              {selectSection === "history" ? (
+                <HistoryProfileSection
+                  setBookId={setBookId}
+                  booksSection={booksSection as HistoryBooksType[]}
+                />
+              ) : (
+                <div className="w-full h-full p-4 xl:px-8 px-4 grid xl:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-y-6 bg-gray-50">
+                  {booksSection.map((book) => {
+                    return (
+                      <article
+                        key={book.id}
+                        onClick={() => {
+                          setBookId(book.id);
+                          setShowModals({
+                            ...showModals,
+                            checkBookModal: "showModal",
+                          });
+                        }}
+                        className="group flex flex-col shadow w-38 md:w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
+                      >
+                        <img
+                          alt={`${book.cover} image`}
+                          className="w-full rounded"
+                          src={`http://localhost:3000/uploads/${book?.cover}`}
+                        />
+                        <div className="flex flex-col gap-1">
+                          <h2 className="font-medium overflow-hidden text-nowrap text-xs md:text-[14px] text-ellipsis">
+                            {book?.title}
+                          </h2>
+                          <h3 className="text-gray-600 text-xs md:text-[13px]">
+                            {book?.author}
+                          </h3>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="pt-12">
+              <EmptySection message="No books to show" />
             </div>
+          )}
+        </div>
+      </section>
 
-            {booksSection.length > 0 ? (
-              <>
-                {selectSection === "history" ? (
-                  <HistoryProfileSection
-                    setBookId={setBookId}
-                    booksSection={booksSection as HistoryBooksType[]}
-                  />
-                ) : (
-                  <div className="w-full h-full p-4 px-8 grid grid-cols-4 bg-gray-50">
-                    {booksSection.map((book) => {
-                      return (
-                        <article
-                          key={book.id}
-                          onClick={() => {
-                            setBookId(book.id);
-                            setShowModals({
-                              ...showModals,
-                              checkBookModal: "showModal",
-                            });
-                          }}
-                          className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
-                        >
-                          <img
-                            alt={`${book.cover} image`}
-                            className="w-full rounded"
-                            src={`http://localhost:3000/uploads/${book?.cover}`}
-                          />
-                          <div className="flex flex-col gap-1">
-                            <h2 className="font-medium overflow-hidden text-nowrap text-[14px] text-ellipsis">
-                              {book?.title}
-                            </h2>
-                            <h3 className="text-gray-600 text-[13px]">
-                              {book?.author}
-                            </h3>
-                          </div>
-                        </article>
-                      );
-                    })}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="pt-12">
-                <EmptySection message="No books to show" />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
-      </div>
-
-      <ToastModal />
+      {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>
   );
 }

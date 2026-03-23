@@ -46,7 +46,7 @@ function UpdateProfile() {
   });
 
   return (
-    <section className="flex self-center my-4 w-112.5 flex-col border border-gray-100 shadow rounded-lg">
+    <section className="flex self-center my-4 w-full md:w-112.5 flex-col border border-gray-100 shadow rounded-lg">
       <header className="p-4 flex items-center w-full h-12.5 bg-[#082030] rounded-tl-lg rounded-tr-lg">
         <h2 className="text-white font-medium flex items-center gap-2">
           <FaPenToSquare /> Update profile
