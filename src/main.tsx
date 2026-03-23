@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App.tsx";
 import MainContextProvider from "./context/MainContext.tsx";
 import { BrowserRouter } from "react-router-dom";
+import { BooksContextProvider } from "./context/BookContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <MainContextProvider>
-        <App />
+        <BooksContextProvider>
+          <App />
+        </BooksContextProvider>
       </MainContextProvider>
     </BrowserRouter>
   </StrictMode>,

@@ -35,17 +35,17 @@ function BookSection({
   const [isShowingMore, setIsShowingMore] = useState(false);
 
   return (
-    <div className="px-12 py-6 bg-gray-100">
-      <section className="px-8 h-fit bg-white border border-gray-100 rounded-xl flex flex-col gap-6 py-4">
+    <div className="xl:px-12 md:px-6 px-4 md:py-6 py-4 bg-gray-100">
+      <section className="xl:px-8 md:px-6 px-4 h-fit bg-white border border-gray-100 rounded-xl flex flex-col gap-6 py-4">
         <header className="flex items-center justify-between">
-          <h1 className="font-medium text-xl flex items-center gap-3">
+          <h1 className="font-medium md:text-xl flex items-center gap-3">
             {title} {TitleIcon && <TitleIcon style={{ color: iconColor }} />}
           </h1>
 
           {books.length > 10 && (
             <Link
               to={`/bookSection/${sectionType}`}
-              className="bg-blue-500/15 px-3 gap-2 h-7.5 rounded text-sm flex items-center font-medium text-blue-400"
+              className="bg-blue-500/15 px-3 gap-2 h-7.5 rounded md:text-sm text-xs flex items-center font-medium text-blue-400"
             >
               View all <FaArrowRightLong />
             </Link>
@@ -53,7 +53,7 @@ function BookSection({
         </header>
 
         {booksLoading === true ? (
-          <div className="grid grid-cols-5 gap-y-6 gap-x-8 w-full h-full">
+          <div className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-y-6 gap-x-8 w-full h-full">
             {Array.from({ length: 5 }).map((position) => {
               return (
                 <div key={Number(position)}>
@@ -67,7 +67,9 @@ function BookSection({
             {booksLoading === "empty" ? (
               <EmptySection message="No books to show." />
             ) : (
-              <div className="grid grid-cols-5 gap-y-6 gap-x-8">{children}</div>
+              <div className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-y-6 gap-x-8">
+                {children}
+              </div>
             )}
           </>
         )}

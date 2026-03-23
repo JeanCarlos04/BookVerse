@@ -1,4 +1,3 @@
-import Aside from "../components/Aside";
 import {
   FaGear,
   FaLock,
@@ -7,7 +6,6 @@ import {
   FaPenToSquare,
 } from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
-import ToastModal from "../components/UX/ToastModal";
 import ChangePassword from "../components/ChangePassword";
 import UpdateProfile from "../components/UpdateProfile";
 import { useState } from "react";
@@ -19,9 +17,8 @@ function Settings() {
   const [selectSetting, setSelectSetting] = useState<SettingsType>("closed");
 
   return (
-    <main className="flex w-full h-full">
-      <Aside />
-      <div className="w-full h-screen flex flex-col gap-4 px-12 py-12">
+    <main className="flex w-full h-full xl:pl-(--aside-width)">
+      <div className="w-full h-screen flex flex-col gap-4 xl:px-12 px-4 md:px-8 xl:py-12 md:py-8 py-6">
         <header>
           <h1 className="font-medium text-2xl text-gray-800 flex items-center gap-2">
             Settings <FaGear />
@@ -69,8 +66,6 @@ function Settings() {
           </li>
         </ul>
       </div>
-
-      <ToastModal />
     </main>
   );
 }

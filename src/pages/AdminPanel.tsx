@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
-import ToastModal from "../components/UX/ToastModal";
 import useContextHook from "../hooks/useContextHook";
 import { useForm } from "react-hook-form";
 import { FaRegEye } from "react-icons/fa6";
@@ -11,6 +8,7 @@ import ConfirmDelete from "../components/UX/ConfirmDelete";
 import CreateBookPanel from "../components/CreateBookPanel";
 import DeleteBookPanel from "../components/DeleteBookPanel";
 import type { BooksCategoriesTypes } from "../types/booksType";
+import BookSpecs from "../components/UX/BookSpecs";
 
 export type FormType = {
   title: string;
@@ -57,6 +55,7 @@ export function AdminPanel() {
 
   useEffect(() => {
     if (selectPanelFunction === "create") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFoundedBook(undefined);
     }
   }, [selectPanelFunction, setFoundedBook]);
@@ -147,76 +146,53 @@ export function AdminPanel() {
   };
 
   return (
-    <>
-      <main className="flex h-screen w-full bg-gray-50">
-        <Aside />
-        <div className="w-full">
-          <Nav />
+    <main className="flex h-[calc(100vh-var(--nav-height))] justify-center w-full bg-gray-50 xl:pl-(--aside-width)">
+      <div className="flex w-full h-fit items-center flex-col py-8 xl:px-12 px-6 gap-4">
+        <header className="flex gap-3 w-full justify-center py-3 bg-white rounded shadow">
+          <h1 className="text-xl  font-medium">Admin Panel</h1>
 
-          <div className="flex items-center flex-col py-8 px-36 gap-4">
-            <header className="flex gap-3 w-full justify-center py-3 bg-white rounded shadow">
-              <h1 className="text-xl  font-medium">Admin Panel</h1>
+          <select
+            className="bg-gray-50 rounded border border-gray-100 shadow px-2"
+            onChange={(e) =>
+              setSelectPanelFunction(e.target.value as SelectPanel)
+            }
+          >
+            <option className="text-xs xl:text-base" value="create">
+              Create
+            </option>
+            <option className="text-xs xl:text-base" value="delete">
+              Delete
+            </option>
+            <option className="text-xs xl:text-base" value="edit">
+              Edit
+            </option>
+          </select>
+        </header>
 
-              <select
-                className="bg-gray-50 rounded border border-gray-100 shadow px-2"
-                onChange={(e) =>
-                  setSelectPanelFunction(e.target.value as SelectPanel)
-                }
-              >
-                <option value="create">Create</option>
-                <option value="delete">Delete</option>
-                <option value="edit">Edit</option>
-              </select>
+        <div className="flex md:flex-row items-center md:items-start flex-col gap-8 xl:gap-16 px-4 py-4 bg-white shadow h-fit w-full justify-center rounded-xl">
+          {handlePanel()}
+          <section className="flex items-center flex-col gap-4 w-58">
+            <header className="text-lg font-medium flex items-center gap-2">
+              Books Visualizer <FaRegEye className="text-gray-600" />
             </header>
 
-            <div className="flex gap-12 items-center px-4 py-4 bg-white shadow h-fit w-full justify-center rounded-xl">
-              {handlePanel()}
-              <section className="flex flex-col gap-4 w-58">
-                <header className="text-lg font-medium flex items-center gap-2">
-                  Books Visualizer <FaRegEye className="text-gray-600" />
-                </header>
-
-                <div className="flex flex-col gap-3 px-6 bg-[#082030] rounded-md py-4">
-                  <img
-                    alt={`${foundedBook?.cover} image`}
-                    src={`${foundedBook !== undefined ? `http://localhost:3000/uploads/${foundedBook?.cover}` : imagePreview}`}
-                    className="w-50 h-75 rounded-md shadow bg-gray-300"
-                  />
-                  <h2 className="text-center font-medium text-lg text-white">
-                    {foundedBook?.title || "The best example."}
-                  </h2>
-                  <div className="flex items-center gap-4 justify-center">
-                    <p className="text-gray-100 text-sm font-medium">
-                      {foundedBook?.likes} likes
-                    </p>
-                    <p className="text-gray-100 text-sm font-medium">
-                      {foundedBook?.pages} pages
-                    </p>
-                  </div>
-                  <h3 className="text-center text-yellow-400 text-sm">
-                    {foundedBook?.author || "Jhon Doe"}
-                  </h3>
-
-                  <p className="text-center text-sm text-gray-200">
-                    {foundedBook?.sinopsis ||
-                      `Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Eius, labore, sequi aperiam illo.`}
-                  </p>
-                </div>
-              </section>
+            <div className="flex flex-col gap-3 px-6 bg-[#082030] rounded-md py-4">
+              <BookSpecs
+                imagePreview={imagePreview}
+                checkBookData={foundedBook}
+              />
             </div>
-          </div>
+          </section>
         </div>
+      </div>
 
-        <ConfirmDelete
-          setHideConfirmDelete={setShowConfirmModal}
-          showConfirmDelete={showConfirmModal}
-          title={`${foundedBook?.title}`}
-          handleDeleteFn={() => handleDeleteBook(foundedBook?.id)}
-        />
-        <ToastModal />
-      </main>
-    </>
+      <ConfirmDelete
+        setHideConfirmDelete={setShowConfirmModal}
+        showConfirmDelete={showConfirmModal}
+        title={`${foundedBook?.title}`}
+        handleDeleteFn={() => handleDeleteBook(foundedBook?.id)}
+      />
+    </main>
   );
 }
 

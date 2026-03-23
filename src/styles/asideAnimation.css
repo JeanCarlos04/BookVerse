@@ -1,0 +1,27 @@
+.showModal.asideClass {
+  animation: showAside both 0.3s ease-in-out;
+}
+
+.hideModal.asideClass {
+  animation: hideAside both 0.3s ease-in-out;
+}
+
+@keyframes showAside {
+  0% {
+    transform: translateX(-200px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes hideAside {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-200px);
+  }
+}

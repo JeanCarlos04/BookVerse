@@ -8,10 +8,10 @@ import {
 import useContextHook from "../hooks/useContextHook";
 import { useEffect, useState } from "react";
 import type { BooksType } from "../types/booksType";
-import ToastModal from "./UX/ToastModal";
 import fetchFunction from "../utils/fetchFunction";
 import ConfirmDelete from "./UX/ConfirmDelete";
 import BookSpecs from "./UX/BookSpecs";
+import useBookContext from "../hooks/useBookContext";
 
 type CheckBookProps = {
   book_id: BooksType["id"];
@@ -21,16 +21,21 @@ function CheckBook({ book_id }: CheckBookProps) {
   const {
     setShowModals,
     showModals,
+
+    setCheckBookData,
+    checkBookData,
+
+    setToastType,
+  } = useContextHook();
+
+  const {
+    handleReserveBooks,
+    reservedBooks,
     addLike,
     addBooks,
     userSavedBooks,
     favorieBooks,
-    setCheckBookData,
-    checkBookData,
-    handleReserveBooks,
-    reservedBooks,
-    setToastType,
-  } = useContextHook();
+  } = useBookContext();
 
   const unreserveBook = async () => {
     const res = await fetch(
@@ -146,7 +151,6 @@ function CheckBook({ book_id }: CheckBookProps) {
         setHideConfirmDelete={setShowConfirmModal}
         showConfirmDelete={showConfirmModal}
       />
-      <ToastModal />
     </>
   );
 }

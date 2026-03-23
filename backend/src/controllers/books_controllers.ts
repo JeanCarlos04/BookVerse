@@ -115,10 +115,34 @@ export const getBookByTitle = async (req: Request, res: Response) => {
 export const getMostLikedBooks = async (req: Request, res: Response) => {
   try {
     const mostLikedBooks = await connection.query(
-      `SELECT * FROM books ORDER BY likes DESC LIMIT 10`,
+      `SELECT * FROM books ORDER BY likes DESC LIMIT 50`,
     );
 
     res.json(mostLikedBooks.rows);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getMostSavedBooks = async (req: Request, res: Response) => {
+  try {
+    const mostSavedBooks = await connection.query(
+      "SELECT * FROM books ORDER BY saved DESC LIMIT 50",
+    );
+
+    res.json(mostSavedBooks.rows);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getMostReserved = async (req: Request, res: Response) => {
+  try {
+    const mostReservedBooks = await connection.query(
+      "SELECT * FROM books ORDER BY reserves DESC LIMIT 50",
+    );
+
+    res.json(mostReservedBooks.rows);
   } catch (err) {
     console.error(err);
   }

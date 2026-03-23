@@ -3,4 +3,6 @@ export type SectionType =
   | "mostLiked_books"
   | "favorite_books"
   | "saved_books"
-  | "reserved_books";
+  | "reserved_books"
+  | "mostReserved_books"
+  | "mostSaved_books";

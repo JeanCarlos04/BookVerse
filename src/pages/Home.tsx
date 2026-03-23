@@ -1,33 +1,39 @@
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
+// import Aside from "../components/Aside";
+// import Nav from "../components/Nav";
 import BookSection from "../components/BookSection";
 import ShowingBooks from "../components/ShowingBooks";
 import CheckBook from "../components/CheckBook";
-import { FaFire } from "react-icons/fa6";
+import {
+  FaFire,
+  FaRegHeart,
+  FaBookBookmark,
+  FaCalendarCheck,
+} from "react-icons/fa6";
 import useContextHook from "../hooks/useContextHook";
+import useBookContext from "../hooks/useBookContext";
 import { useEffect } from "react";
 import { useState, useRef } from "react";
 import type { BooksType } from "../types/booksType";
-import ToastModal from "../components/UX/ToastModal";
 import fetchBooksFunction from "../utils/fetchBooksFunction";
 
 function Home() {
+  const { showModals, bookId, search } = useContextHook();
   const {
-    showModals,
-    bookId,
-    search,
-    setBooksPerPage,
     booksPerPage,
     setBooksLoading,
     booksLoading,
-  } = useContextHook();
+    showMorePerPage,
+    showLessPerPage,
+  } = useBookContext();
   const [books, setBooks] = useState<BooksType[]>([]);
   const [mostLikedBooks, setMostLikedBooks] = useState<BooksType[]>([]);
+  const [mostSavedBooks, setMostSavedBooks] = useState<BooksType[]>([]);
+  const [mostReservedBooks, setMostReservedBooks] = useState<BooksType[]>([]);
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const searchBooks = async (search: string) => {
     try {
-      setBooksLoading((prev) => ({ ...prev, generalBooks: true }));
+      setBooksLoading((prev) => ({ ...prev, ["recommended_books"]: true }));
       const params = new URLSearchParams();
       params.set("search", search);
 
@@ -42,11 +48,11 @@ function Home() {
         if (data.length <= 0) {
           return setBooksLoading((prev) => ({
             ...prev,
-            generalBooks: "empty",
+            ["recommended_books"]: "empty",
           }));
         }
         setBooks(data);
-        setBooksLoading((prev) => ({ ...prev, generalBooks: false }));
+        setBooksLoading((prev) => ({ ...prev, ["recommended_books"]: false }));
       }
     } catch (err) {
       console.error(err);
@@ -57,16 +63,39 @@ function Home() {
     const data = await fetchBooksFunction<BooksType[]>(
       "http://localhost:3000/books/get/mostLiked",
       setBooksLoading,
-
-      "generalBooks",
+      "recommended_books",
     );
 
     setMostLikedBooks(data);
   };
 
+  const getMostSavedBooks = async () => {
+    const data = await fetchBooksFunction<BooksType[]>(
+      "http://localhost:3000/books/mostSaved",
+      setBooksLoading,
+      "mostSaved_books",
+    );
+
+    setMostSavedBooks(data);
+  };
+
+  const getMostReservedBooks = async () => {
+    const data = await fetchBooksFunction<BooksType[]>(
+      "http://localhost:3000/books/mostReserved",
+      setBooksLoading,
+      "mostReserved_books",
+    );
+
+    setMostReservedBooks(data);
+  };
+
   useEffect(() => {
     const init = async () => {
-      getMostLikedBooks();
+      await Promise.all([
+        getMostLikedBooks(),
+        getMostReservedBooks(),
+        getMostSavedBooks(),
+      ]);
     };
 
     init();
@@ -90,70 +119,76 @@ function Home() {
   }, [search]);
 
   return (
-    <main className="flex w-full h-full">
-      <Aside />
-      <div className="w-full">
-        <Nav />
+    <main className="flex flex-col w-full h-full xl:pl-(--aside-width)">
+      <BookSection
+        booksLoading={booksLoading["recommended_books"]}
+        booksPerPage={booksPerPage["recommended_books"]}
+        onShowLess={() => showLessPerPage("recommended_books")}
+        onShowMore={() => showMorePerPage("recommended_books")}
+        sectionType="recommended_books"
+        books={books}
+        iconColor="#f22b2b"
+        TitleIcon={FaFire}
+        title="Recommended"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["recommended_books"]}
+          bookData={books}
+        />
+      </BookSection>
 
-        <BookSection
-          booksLoading={booksLoading.generalBooks}
-          sectionType="recommended_books"
-          booksPerPage={booksPerPage.reccommendedPerPage}
-          books={books}
-          iconColor="#f22b2b"
-          TitleIcon={FaFire}
-          title="Recommended"
-          onShowLess={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              reccommendedPerPage: 10,
-            })
-          }
-          onShowMore={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              reccommendedPerPage: booksPerPage.reccommendedPerPage + 10,
-            })
-          }
-        >
-          <ShowingBooks
-            booksPerPage={booksPerPage.reccommendedPerPage}
-            bookData={books}
-          />
-        </BookSection>
+      <BookSection
+        booksLoading={booksLoading["mostLiked_books"]}
+        booksPerPage={booksPerPage["mostLiked_books"]}
+        onShowLess={() => showLessPerPage("mostLiked_books")}
+        onShowMore={() => showMorePerPage("mostLiked_books")}
+        sectionType="mostLiked_books"
+        books={mostLikedBooks}
+        iconColor="#f22b2b"
+        TitleIcon={FaRegHeart}
+        title="Most liked"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["mostLiked_books"]}
+          bookData={mostLikedBooks}
+        />
+      </BookSection>
 
-        <BookSection
-          booksLoading={booksLoading.generalBooks}
-          sectionType="mostLiked_books"
-          booksPerPage={booksPerPage.mostLikedPerPage}
-          books={mostLikedBooks}
-          iconColor="#f22b2b"
-          TitleIcon={FaFire}
-          title="Most liked"
-          onShowLess={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              mostLikedPerPage: 10,
-            })
-          }
-          onShowMore={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              mostLikedPerPage: booksPerPage.mostLikedPerPage + 10,
-            })
-          }
-        >
-          {" "}
-          <ShowingBooks
-            booksPerPage={booksPerPage.reccommendedPerPage}
-            bookData={mostLikedBooks}
-          />
-        </BookSection>
+      <BookSection
+        booksLoading={booksLoading["mostSaved_books"]}
+        sectionType="mostSaved_books"
+        booksPerPage={booksPerPage["mostSaved_books"]}
+        onShowLess={() => showLessPerPage("mostSaved_books")}
+        onShowMore={() => showMorePerPage("mostSaved_books")}
+        books={mostSavedBooks}
+        iconColor="#f22b2b"
+        TitleIcon={FaBookBookmark}
+        title="Most saved"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["mostSaved_books"]}
+          bookData={mostSavedBooks}
+        />
+      </BookSection>
 
-        {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
-      </div>
+      <BookSection
+        booksLoading={booksLoading["mostReserved_books"]}
+        sectionType="mostReserved_books"
+        booksPerPage={booksPerPage["mostReserved_books"]}
+        onShowLess={() => showLessPerPage("mostReserved_books")}
+        onShowMore={() => showMorePerPage("mostReserved_books")}
+        books={mostReservedBooks}
+        iconColor="#f22b2b"
+        TitleIcon={FaCalendarCheck}
+        title="Most reserved"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["mostReserved_books"]}
+          bookData={mostReservedBooks}
+        />
+      </BookSection>
 
-      <ToastModal />
+      {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>
   );
 }

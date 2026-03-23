@@ -1,7 +1,5 @@
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
-import ToastModal from "../components/UX/ToastModal";
 import useContextHook from "../hooks/useContextHook";
+import useBookContext from "../hooks/useBookContext";
 import Pagination from "../components/UX/Pagination";
 import EmptySection from "../components/UX/EmpySection";
 import { useEffect, useState } from "react";
@@ -22,14 +20,10 @@ function ShowSpecificSection() {
   const firstIndex = currentPage * booksPerPage;
   const lastIndex = firstIndex + booksPerPage;
 
-  const {
-    setBookId,
-    setShowModals,
-    showModals,
-    search,
-    bookId,
-    filteredSectionBooks,
-  } = useContextHook();
+  const { setBookId, setShowModals, showModals, search, bookId } =
+    useContextHook();
+
+  const { filteredSectionBooks } = useBookContext();
 
   const handleShowBooks = filteredSectionBooks?.length
     ? filteredSectionBooks
@@ -42,6 +36,7 @@ function ShowSpecificSection() {
       favorite_books: "/user/books/get/liked",
       reserved_books: "/user/books/get/reserved",
       saved_books: "/user/books/get",
+      mostReserved_books: "/books/get/mostSaved",
     };
 
     const params = new URLSearchParams();
@@ -73,95 +68,89 @@ function ShowSpecificSection() {
   }, []);
 
   return (
-    <main className="flex w-full h-full">
-      <Aside />
-      <div className="w-full">
-        <Nav />
-
-        <div className="px-12 py-6 bg-gray-100">
-          <section className="px-8 h-fit bg-white rounded-xl flex flex-col gap-6 py-4">
-            <header className="flex items-center justify-between">
-              <h1 className="font-medium text-xl flex items-center gap-3 capitalize">
-                {sectionType?.replace("_", " ")}{" "}
-              </h1>
-              <div className="relative">
-                <button
-                  onClick={() =>
-                    showFilterPanel === "showModal"
-                      ? setShowFilterPanel("hideModal")
-                      : setShowFilterPanel("showModal")
-                  }
-                  className="cursor-pointer hover:bg-gray-200 duration-200 flex items-center gap-2 font-medium text-gray-600 px-3 h-8.25 bg-gray-100 rounded-md"
-                >
-                  <FaFilter /> <p className="text-sm">Filter</p>
-                </button>
-                {showFilterPanel !== "disappearModal" && (
-                  <FilterPanel
-                    filterPanelClass={showFilterPanel}
-                    setFilterPanelClaas={setShowFilterPanel}
-                  />
-                )}
-              </div>
-            </header>
-            <div className="grid grid-cols-5 gap-y-6 gap-x-8">
-              {handleShowBooks.length > 0 && (
-                <>
-                  {(filteredSectionBooks.length > 0
-                    ? filteredSectionBooks
-                    : bookSection
-                  )
-                    ?.slice(firstIndex, lastIndex)
-                    .map((book) => {
-                      return (
-                        <article
-                          key={book.id}
-                          onClick={() => {
-                            setBookId(book.id);
-                            setShowModals({
-                              ...showModals,
-                              checkBookModal: "showModal",
-                            });
-                          }}
-                          className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
-                        >
-                          <img
-                            alt={`${book.cover} cover`}
-                            className="w-full rounded"
-                            src={`http://localhost:3000/uploads/${book?.cover}`}
-                          />
-                          <div className="flex flex-col gap-1">
-                            <h2 className="font-medium overflow-hidden text-nowrap text-[14px] text-ellipsis">
-                              {book?.title}
-                            </h2>
-                            <h3 className="text-gray-600 text-[13px]">
-                              {book?.author}
-                            </h3>
-                          </div>
-                        </article>
-                      );
-                    })}
-                </>
+    <main className="flex w-full h-full xl:pl-(--aside-width)">
+      <div className="xl:px-12 px-6 py-6 bg-gray-100">
+        <section className="xl:px-8 md:px-6 px-4 h-fit bg-white rounded-xl flex flex-col gap-6 py-4">
+          <header className="flex items-center justify-between">
+            <h1 className="font-medium md:text-xl flex items-center gap-3 capitalize">
+              {sectionType?.replace("_", " ")}{" "}
+            </h1>
+            <div className="relative">
+              <button
+                onClick={() =>
+                  showFilterPanel === "showModal"
+                    ? setShowFilterPanel("hideModal")
+                    : setShowFilterPanel("showModal")
+                }
+                className="cursor-pointer hover:bg-gray-200 duration-200 flex items-center gap-2 font-medium text-gray-600 px-3 h-8.25 bg-gray-100 rounded-md"
+              >
+                <FaFilter /> <p className="text-sm">Filter</p>
+              </button>
+              {showFilterPanel !== "disappearModal" && (
+                <FilterPanel
+                  filterPanelClass={showFilterPanel}
+                  setFilterPanelClaas={setShowFilterPanel}
+                />
               )}
             </div>
-
-            {handleShowBooks.length <= 0 && (
-              <EmptySection message="No books to show." />
+          </header>
+          <div className="grid xl:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-y-6 gap-x-8">
+            {handleShowBooks.length > 0 && (
+              <>
+                {(filteredSectionBooks.length > 0
+                  ? filteredSectionBooks
+                  : bookSection
+                )
+                  ?.slice(firstIndex, lastIndex)
+                  .map((book) => {
+                    return (
+                      <article
+                        key={book.id}
+                        onClick={() => {
+                          setBookId(book.id);
+                          setShowModals({
+                            ...showModals,
+                            checkBookModal: "showModal",
+                          });
+                        }}
+                        className="group flex flex-col shadow w-38 md:w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
+                      >
+                        <img
+                          alt={`${book.cover} image`}
+                          className="w-full rounded"
+                          src={`http://localhost:3000/uploads/${book?.cover}`}
+                        />
+                        <div className="flex flex-col gap-1">
+                          <h2 className="font-medium overflow-hidden text-nowrap text-xs md:text-[14px] text-ellipsis">
+                            {book?.title}
+                          </h2>
+                          <h3 className="text-gray-600 text-xs md:text-[13px]">
+                            {book?.author}
+                          </h3>
+                        </div>
+                      </article>
+                    );
+                  })}
+              </>
             )}
+          </div>
 
-            <Pagination
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              firstIndex={firstIndex}
-              lastIndex={lastIndex}
-              booksPerPage={booksPerPage}
-              booksLength={handleShowBooks}
-            />
-          </section>
-        </div>
+          {handleShowBooks.length <= 0 && (
+            <EmptySection message="No books to show." />
+          )}
+
+          <Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            firstIndex={firstIndex}
+            lastIndex={lastIndex}
+            booksPerPage={booksPerPage}
+            booksLength={handleShowBooks}
+          />
+        </section>
       </div>
 
       {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
-      <ToastModal />
     </main>
   );
 }

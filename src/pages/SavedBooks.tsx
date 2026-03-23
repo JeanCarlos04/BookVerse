@@ -1,83 +1,58 @@
-import Aside from "../components/Aside";
-import Nav from "../components/Nav";
 import { FaBookBookmark, FaRegCalendarCheck } from "react-icons/fa6";
 import CheckBook from "../components/CheckBook";
 import useContextHook from "../hooks/useContextHook";
+import useBookContext from "../hooks/useBookContext";
 import ShowingBooks from "../components/ShowingBooks";
 import BookSection from "../components/BookSection";
 
 function SavedBooks() {
+  const { showModals, bookId } = useContextHook();
+
   const {
-    showModals,
-    bookId,
     booksPerPage,
-    setBooksPerPage,
     reservedBooks,
     userSavedBooks,
     booksLoading,
-  } = useContextHook();
+    showLessPerPage,
+    showMorePerPage,
+  } = useBookContext();
 
   return (
-    <main className="flex w-full h-full">
-      <Aside />
-      <div className="w-full">
-        <Nav />
+    <main className="flex flex-col w-full h-full xl:pl-(--aside-width)">
+      <BookSection
+        booksLoading={booksLoading["reserved_books"]}
+        sectionType="reserved_books"
+        booksPerPage={booksPerPage["reserved_books"]}
+        onShowLess={() => showLessPerPage("reserved_books")}
+        onShowMore={() => showMorePerPage("reserved_books")}
+        books={reservedBooks}
+        iconColor="#51A2FF"
+        TitleIcon={FaRegCalendarCheck}
+        title="Reserved books"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["reserved_books"]}
+          bookData={reservedBooks}
+        />
+      </BookSection>
 
-        <BookSection
-          booksLoading={booksLoading.userReservedBooks}
-          sectionType="reserved_books"
-          booksPerPage={booksPerPage.reservedBooksPerPage}
-          books={reservedBooks}
-          iconColor="#51A2FF"
-          TitleIcon={FaRegCalendarCheck}
-          title="Reserved books"
-          onShowLess={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              reservedBooksPerPage: 10,
-            })
-          }
-          onShowMore={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              reservedBooksPerPage: booksPerPage.reservedBooksPerPage + 10,
-            })
-          }
-        >
-          <ShowingBooks
-            booksPerPage={booksPerPage.reservedBooksPerPage}
-            bookData={reservedBooks}
-          />
-        </BookSection>
+      <BookSection
+        booksLoading={booksLoading["saved_books"]}
+        sectionType="saved_books"
+        booksPerPage={booksPerPage["saved_books"]}
+        onShowLess={() => showLessPerPage("saved_books")}
+        onShowMore={() => showMorePerPage("saved_books")}
+        books={userSavedBooks}
+        iconColor="#feb302"
+        TitleIcon={FaBookBookmark}
+        title="Saved books"
+      >
+        <ShowingBooks
+          booksPerPage={booksPerPage["saved_books"]}
+          bookData={userSavedBooks}
+        />
+      </BookSection>
 
-        <BookSection
-          booksLoading={booksLoading.userSavedBooks}
-          sectionType="saved_books"
-          booksPerPage={booksPerPage.savedBooksPerPage}
-          books={userSavedBooks}
-          iconColor="#feb302"
-          TitleIcon={FaBookBookmark}
-          title="Saved books"
-          onShowLess={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              savedBooksPerPage: 10,
-            })
-          }
-          onShowMore={() =>
-            setBooksPerPage({
-              ...booksPerPage,
-              savedBooksPerPage: booksPerPage.savedBooksPerPage + 10,
-            })
-          }
-        >
-          {" "}
-          <ShowingBooks
-            booksPerPage={booksPerPage.savedBooksPerPage}
-            bookData={userSavedBooks}
-          />
-        </BookSection>
-      </div>
       {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>
   );

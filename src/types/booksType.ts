@@ -22,32 +22,18 @@ export type HistoryBooksType = BooksType & {
 
 export type BooksCategoriesTypes = [
   "Fantasy",
-
   "Science Fiction",
-
   "Mystery",
-
   "Romance",
-
   "Horror",
-
   "Adventure",
-
   "Dystopian",
-
   "Self-help",
-
   "Programming",
-
   "Technology",
-
   "History",
-
   "Biography",
-
   "Finance",
-
   "Psychology",
-
   "Business",
 ];

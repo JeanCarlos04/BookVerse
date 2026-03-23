@@ -23,7 +23,7 @@ function ShowingBooks({ bookData, booksPerPage }: ShowingBooksProps) {
                     checkBookModal: "showModal",
                   });
                 }}
-                className="group flex flex-col shadow w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
+                className="group flex flex-col shadow w-38 md:w-50 p-4 rounded gap-2 hover:-translate-y-2.5 duration-200 cursor-pointer"
               >
                 <img
                   alt={`${book.cover} image`}
@@ -31,10 +31,12 @@ function ShowingBooks({ bookData, booksPerPage }: ShowingBooksProps) {
                   src={`http://localhost:3000/uploads/${book?.cover}`}
                 />
                 <div className="flex flex-col gap-1">
-                  <h2 className="font-medium overflow-hidden text-nowrap text-[14px] text-ellipsis">
+                  <h2 className="font-medium overflow-hidden text-nowrap text-xs md:text-[14px] text-ellipsis">
                     {book?.title}
                   </h2>
-                  <h3 className="text-gray-600 text-[13px]">{book?.author}</h3>
+                  <h3 className="text-gray-600 text-xs md:text-[13px]">
+                    {book?.author}
+                  </h3>
                 </div>
               </article>
             );
