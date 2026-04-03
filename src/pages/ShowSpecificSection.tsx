@@ -9,6 +9,7 @@ import CheckBook from "../components/CheckBook";
 import { FaFilter } from "react-icons/fa6";
 import type { ShowModalsType } from "../context/MainContext";
 import FilterPanel from "../components/FilterPanel";
+import type { SectionType } from "../types/sectionType";
 
 function ShowSpecificSection() {
   const [showFilterPanel, setShowFilterPanel] =
@@ -30,13 +31,15 @@ function ShowSpecificSection() {
     : bookSection;
 
   const handleGetSectionBook = async () => {
-    const API_URLs: Record<string, string> = {
+    const API_URLs: Record<SectionType | string, string> = {
       recommended_books: "/books/search",
-      mostLiked_books: "/books/get/mostLiked",
+      most_liked_books: "/books/get/mostLiked",
       favorite_books: "/user/books/get/liked",
       reserved_books: "/user/books/get/reserved",
       saved_books: "/user/books/get",
-      mostReserved_books: "/books/get/mostSaved",
+      most_saved_books: "/books/mostSaved",
+      most_reserved_books: "/books/mostReserved",
+      because_you_liked_books: "",
     };
 
     const params = new URLSearchParams();
@@ -69,11 +72,11 @@ function ShowSpecificSection() {
 
   return (
     <main className="flex w-full h-full xl:pl-(--aside-width)">
-      <div className="xl:px-12 px-6 py-6 bg-gray-100">
+      <div className="xl:px-12 w-full px-6 py-6 bg-gray-100">
         <section className="xl:px-8 md:px-6 px-4 h-fit bg-white rounded-xl flex flex-col gap-6 py-4">
           <header className="flex items-center justify-between">
             <h1 className="font-medium md:text-xl flex items-center gap-3 capitalize">
-              {sectionType?.replace("_", " ")}{" "}
+              {sectionType?.replaceAll("_", " ")}
             </h1>
             <div className="relative">
               <button

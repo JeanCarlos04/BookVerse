@@ -147,3 +147,18 @@ export const getMostReserved = async (req: Request, res: Response) => {
     console.error(err);
   }
 };
+
+export const getRelatedBooks = async (req: Request, res: Response) => {
+  const likedBooks = await connection.query(
+    "SELECT * FROM books b JOIN user_liked_books l_b ON l_b.book_id = b.id",
+  );
+
+  const randomIndex = Math.round(Math.random());
+
+  const books = await connection.query(
+    "SELECT * FROM books WHERE categories && $1",
+    [likedBooks.rows[randomIndex].categories],
+  );
+
+  res.json(books.rows);
+};

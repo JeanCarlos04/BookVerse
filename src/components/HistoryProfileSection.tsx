@@ -16,7 +16,6 @@ function HistoryProfileSection({
 }: HistoryProfileSectionProps) {
   const { showModals, setShowModals } = useContextHook();
   const [historySection, setHistorySection] = useState<HistorySection>("all");
-
   const booksFiltered = useMemo(() => {
     return booksSection.filter((book) => book.status_type === historySection);
   }, [booksSection, historySection]);

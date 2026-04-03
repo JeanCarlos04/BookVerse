@@ -20,6 +20,7 @@ import {
   filterBooks,
   getMostReserved,
   getMostSavedBooks,
+  getRelatedBooks,
 } from "../controllers/books_controllers.ts";
 import {
   addBooks,
@@ -57,6 +58,7 @@ router.get("/books/getByTitle", authToken, getBookByTitle);
 router.post("/books/filteredBooks", authToken, filterBooks);
 router.get("/books/mostReserved", authToken, getMostReserved);
 router.get("/books/mostSaved", authToken, getMostSavedBooks);
+router.get("/books/realtedBooks", authToken, getRelatedBooks);
 
 // USER BOOKS APIs
 
