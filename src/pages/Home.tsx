@@ -1,5 +1,3 @@
-// import Aside from "../components/Aside";
-// import Nav from "../components/Nav";
 import BookSection from "../components/BookSection";
 import ShowingBooks from "../components/ShowingBooks";
 import CheckBook from "../components/CheckBook";
@@ -15,6 +13,7 @@ import { useEffect } from "react";
 import { useState, useRef } from "react";
 import type { BooksType } from "../types/booksType";
 import fetchBooksFunction from "../utils/fetchBooksFunction";
+import type { BookSectionType } from "../types/BookSectionsType";
 
 function Home() {
   const { showModals, bookId, search } = useContextHook();
@@ -30,6 +29,40 @@ function Home() {
   const [mostSavedBooks, setMostSavedBooks] = useState<BooksType[]>([]);
   const [mostReservedBooks, setMostReservedBooks] = useState<BooksType[]>([]);
   const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [relatedBooks, setRelatedBooks] = useState<BooksType[]>([]);
+
+  const sections: BookSectionType = [
+    {
+      key: "recommended_books",
+      title: "Recommended",
+      books: books,
+      icon: FaFire,
+    },
+    {
+      key: "most_liked_books",
+      title: "Most liked",
+      books: mostLikedBooks,
+      icon: FaRegHeart,
+    },
+    {
+      key: "most_saved_books",
+      title: "Most saved",
+      books: mostSavedBooks,
+      icon: FaBookBookmark,
+    },
+    {
+      key: "most_reserved_books",
+      title: "Most reserved",
+      books: mostReservedBooks,
+      icon: FaCalendarCheck,
+    },
+    {
+      key: "because_you_liked_books",
+      title: "Because you liked...",
+      books: relatedBooks,
+      icon: FaCalendarCheck,
+    },
+  ];
 
   const searchBooks = async (search: string) => {
     try {
@@ -59,6 +92,8 @@ function Home() {
     }
   };
 
+  console.log(relatedBooks);
+
   const getMostLikedBooks = async () => {
     const data = await fetchBooksFunction<BooksType[]>(
       "http://localhost:3000/books/get/mostLiked",
@@ -73,7 +108,7 @@ function Home() {
     const data = await fetchBooksFunction<BooksType[]>(
       "http://localhost:3000/books/mostSaved",
       setBooksLoading,
-      "mostSaved_books",
+      "most_saved_books",
     );
 
     setMostSavedBooks(data);
@@ -83,10 +118,20 @@ function Home() {
     const data = await fetchBooksFunction<BooksType[]>(
       "http://localhost:3000/books/mostReserved",
       setBooksLoading,
-      "mostReserved_books",
+      "most_reserved_books",
     );
 
     setMostReservedBooks(data);
+  };
+
+  const getRelatedBooks = async () => {
+    const data = await fetchBooksFunction<BooksType[]>(
+      "http://localhost:3000/books/realtedBooks",
+      setBooksLoading,
+      "because_you_liked_books",
+    );
+
+    setRelatedBooks(data);
   };
 
   useEffect(() => {
@@ -95,6 +140,7 @@ function Home() {
         getMostLikedBooks(),
         getMostReservedBooks(),
         getMostSavedBooks(),
+        getRelatedBooks(),
       ]);
     };
 
@@ -120,73 +166,24 @@ function Home() {
 
   return (
     <main className="flex flex-col w-full h-full xl:pl-(--aside-width)">
-      <BookSection
-        booksLoading={booksLoading["recommended_books"]}
-        booksPerPage={booksPerPage["recommended_books"]}
-        onShowLess={() => showLessPerPage("recommended_books")}
-        onShowMore={() => showMorePerPage("recommended_books")}
-        sectionType="recommended_books"
-        books={books}
-        iconColor="#f22b2b"
-        TitleIcon={FaFire}
-        title="Recommended"
-      >
-        <ShowingBooks
-          booksPerPage={booksPerPage["recommended_books"]}
-          bookData={books}
-        />
-      </BookSection>
-
-      <BookSection
-        booksLoading={booksLoading["mostLiked_books"]}
-        booksPerPage={booksPerPage["mostLiked_books"]}
-        onShowLess={() => showLessPerPage("mostLiked_books")}
-        onShowMore={() => showMorePerPage("mostLiked_books")}
-        sectionType="mostLiked_books"
-        books={mostLikedBooks}
-        iconColor="#f22b2b"
-        TitleIcon={FaRegHeart}
-        title="Most liked"
-      >
-        <ShowingBooks
-          booksPerPage={booksPerPage["mostLiked_books"]}
-          bookData={mostLikedBooks}
-        />
-      </BookSection>
-
-      <BookSection
-        booksLoading={booksLoading["mostSaved_books"]}
-        sectionType="mostSaved_books"
-        booksPerPage={booksPerPage["mostSaved_books"]}
-        onShowLess={() => showLessPerPage("mostSaved_books")}
-        onShowMore={() => showMorePerPage("mostSaved_books")}
-        books={mostSavedBooks}
-        iconColor="#f22b2b"
-        TitleIcon={FaBookBookmark}
-        title="Most saved"
-      >
-        <ShowingBooks
-          booksPerPage={booksPerPage["mostSaved_books"]}
-          bookData={mostSavedBooks}
-        />
-      </BookSection>
-
-      <BookSection
-        booksLoading={booksLoading["mostReserved_books"]}
-        sectionType="mostReserved_books"
-        booksPerPage={booksPerPage["mostReserved_books"]}
-        onShowLess={() => showLessPerPage("mostReserved_books")}
-        onShowMore={() => showMorePerPage("mostReserved_books")}
-        books={mostReservedBooks}
-        iconColor="#f22b2b"
-        TitleIcon={FaCalendarCheck}
-        title="Most reserved"
-      >
-        <ShowingBooks
-          booksPerPage={booksPerPage["mostReserved_books"]}
-          bookData={mostReservedBooks}
-        />
-      </BookSection>
+      {sections.map((section) => {
+        const { books, icon, title, key } = section;
+        return (
+          <BookSection
+            booksLoading={booksLoading[key]}
+            booksPerPage={booksPerPage[key]}
+            onShowLess={() => showLessPerPage(key)}
+            onShowMore={() => showMorePerPage(key)}
+            sectionType={key}
+            books={books}
+            iconColor="#f22b2b"
+            TitleIcon={icon}
+            title={title}
+          >
+            <ShowingBooks booksPerPage={booksPerPage[key]} bookData={books} />
+          </BookSection>
+        );
+      })}
 
       {bookId && showModals.checkBookModal && <CheckBook book_id={bookId} />}
     </main>
